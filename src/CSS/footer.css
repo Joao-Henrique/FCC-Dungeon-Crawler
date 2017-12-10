@@ -1,0 +1,116 @@
+ul.social-network {
+  list-style: none;
+  display: inline;
+  padding: 0;
+}
+
+ul.social-network li {
+  display: inline;
+  margin: 0 5px;
+  padding: 0;
+}
+
+.social-circle li .socialIcon {
+  display: inline-block;
+  position: relative;
+  margin: 0 auto 0 auto;
+  -moz-border-radius: 50%;
+  -webkit-border-radius: 50%;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 25px;
+  border-color: rgb(0, 0, 0);
+}
+
+.social-circle li i {
+  margin: 0;
+  line-height: 40px;
+  color: white;
+}
+
+.social-circle li .socialIcon:hover i,
+.triggeredHover {
+  -moz-transform: rotate(360deg);
+  -webkit-transform: rotate(360deg);
+  -ms--transform: rotate(360deg);
+  transform: rotate(360deg);
+  -webkit-transition: all 0.2s;
+  -moz-transition: all 0.2s;
+  -o-transition: all 0.2s;
+  -ms-transition: all 0.2s;
+  transition: all 0.2s;
+}
+
+.social-circle i {
+  color: rgb(0, 0, 0);
+  -webkit-transition: all 0.8s;
+  -moz-transition: all 0.8s;
+  -o-transition: all 0.8s;
+  -ms-transition: all 0.8s;
+  transition: all 0.8s;
+}
+
+.socialFooter {
+  text-align: center;
+  padding-top: .5em;
+}
+
+.authorFooter {
+  color: white;
+  text-align: center;
+}
+
+footer {
+  width: 100%;
+  height: 140px;
+}
+
+.footer {
+  background: black;
+}
+
+.separator {
+  visibility: hidden;
+  position: absolute;
+}
+
+.separatorHidden {
+  visibility: hidden;
+  position: absolute;
+}
+
+
+/* Small devices (tablets, 768px and up) */
+
+@media (min-width: 992px) {
+  ul.social-network {
+    float: right;
+  }
+  .authorFooter {
+    text-align: left;
+    padding-top: 1.4em;
+  }
+  footer {
+    position: absolute;
+    position: fixed;
+    bottom: 0;
+    height: 100px;
+    background: black;
+    height: 60px;
+  }
+  .separator {
+    visibility: visible;
+    position: relative;
+  }
+  .separatorHidden {
+    position: relative;
+  }
+  h6 {
+    font-size: 15px;
+    margin-top: 0;
+  }
+  .addNewRecipeButton {
+    margin-bottom: 200px;
+  }
+}
