@@ -37,7 +37,6 @@ class App extends Component {
                 rows={this.rows}
                 cols={this.cols}
                 selectBox={this.selectBox}/>
-
             </div>
           </div>
           <div className="col-md-6 information">
