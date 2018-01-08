@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import logo from '../IMG/logo.svg';
 import FooterInstance from './Footer';
 import ProjectDescription from './ProjectDescription';
+import Menu from './Menu';
 
 class App extends Component {
   render() {
@@ -14,7 +15,9 @@ class App extends Component {
         <h1>Roguelike Dungeon Crawler Game</h1>
         <div className="row">
           <div className="col-md-6 projectSection">
-            <div className="wraper"></div>
+            <div className="wraper">
+              <Menu/>
+            </div>
           </div>
           <div className="col-md-6 information">
             <ProjectDescription/>
