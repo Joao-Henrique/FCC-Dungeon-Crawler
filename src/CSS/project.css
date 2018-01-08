@@ -1,0 +1,35 @@
+.menuSection {
+  display: inline-flex;
+  padding: 1vh;
+  align-items: stretch;
+  width: 100%;
+  border-style: groove;
+  border-color: black;
+}
+p {
+  margin: auto;
+  vertical-align: middle;
+}
+.box {
+  display: inline-block;
+  border: 0.1px solid black;
+  width: 20px;
+  height: 20px;
+}
+.off {
+  background-color: rgb(70, 70, 70);
+}
+.on {
+  background-color: #4CAF50;
+}
+.box:hover {
+  background-color: yellow;
+}
+.center {
+  margin: auto;
+  display: table;
+}
+.grid {
+  line-height: 0;
+  margin: auto;
+}

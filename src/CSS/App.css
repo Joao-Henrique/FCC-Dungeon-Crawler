@@ -29,14 +29,8 @@
   }
 }
 
-.row {
-  margin-bottom: 120px;
-}
-
 .wraper {
   background-color: white;
-  padding-top: 0;
-  padding-bottom: 1em;
   border-style: solid;
   border-radius: 10px;
   max-width: 650px;
@@ -88,9 +82,7 @@ h5 {
 }
 
 @media (min-width: 768px) {
-  .row {
-    margin-bottom: 170px;
-  }
+
   .navBar {
     height: 100px;
     padding-top: 2em;

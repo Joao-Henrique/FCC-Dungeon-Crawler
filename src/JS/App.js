@@ -3,8 +3,23 @@ import logo from '../IMG/logo.svg';
 import FooterInstance from './Footer';
 import ProjectDescription from './ProjectDescription';
 import Menu from './Menu';
+import Grid from './Grid';
 
 class App extends Component {
+
+  constructor() {
+    super();
+    this.cols = 30;
+    this.rows = 20;
+
+    this.state = {
+      generation: 0,
+      gridFull: Array(this.rows)
+        .fill()
+        .map(() => Array(this.cols).fill(false))
+    }
+  }
+
   render() {
     return (
       <div className="App">
@@ -17,6 +32,12 @@ class App extends Component {
           <div className="col-md-6 projectSection">
             <div className="wraper">
               <Menu/>
+              <Grid
+                gridFull={this.state.gridFull}
+                rows={this.rows}
+                cols={this.cols}
+                selectBox={this.selectBox}/>
+
             </div>
           </div>
           <div className="col-md-6 information">
