@@ -32,11 +32,7 @@ class App extends Component {
           <div className="col-md-6 projectSection">
             <div className="wraper">
               <Menu/>
-              <Grid
-                gridFull={this.state.gridFull}
-                rows={this.rows}
-                cols={this.cols}
-                selectBox={this.selectBox}/>
+              <Grid gridFull={this.state.gridFull} rows={this.rows} cols={this.cols}/>
             </div>
           </div>
           <div className="col-md-6 information">

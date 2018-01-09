@@ -4,7 +4,7 @@ class Menu extends React.Component {
 
   render() {
     return (
-      <div class="menuSection">
+      <div className="menuSection">
 
         <h4>Health:</h4>
         <p>100</p>
