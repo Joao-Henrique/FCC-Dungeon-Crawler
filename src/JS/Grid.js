@@ -1,53 +1,68 @@
-import React from 'react';
+import React, {Component} from 'react';
 import Box from './Box';
 
-class Grid extends React.Component {
+class Grid extends Component {
 
-  // LISTEN FOR USER INPUT
-  componentDidMount() {
-    window.addEventListener('keydown', this.handleKeyPress);
+  constructor() {
+    super();
+    this.state = {
+      // HERO INITIAL POSITIONING
+      coordenateX: 10,
+      coordenateY: 10
+    }
   }
 
   // MOVE HERO BASED ON USER INPUT
-  handleKeyPress(e) {
-    console.log(this.heroPosition);
-    console.log(this.coordenateX);
-    console.log(this.coordenateY);
+  handleKeyPress = (e) => {
+
+    const changePositionX = (value) => {
+      this.setState({
+        coordenateX: this.state.coordenateX + value
+      });
+    }
+
+    const changePositionY = (value) => {
+      this.setState({
+        coordenateY: this.state.coordenateY + value
+      });
+    }
+
     switch (e.keyCode) {
         // up
       case 38:
       case 87:
-        this.coordenateY--;
+        changePositionX(-1);
         break;
         // right
       case 39:
       case 68:
-        this.coordenateX++;
+        changePositionY(1);
         break;
         // down
       case 40:
       case 83:
-        this.coordenateY++;
+        changePositionX(1);
         break;
         // left
       case 37:
       case 65:
-        this.coordenateX--;
+        changePositionY(-1);
         break;
       default:
         return;
     }
   }
 
+  // LISTEN FOR USER INPUT
+  componentDidMount() {
+    window.addEventListener('keydown', this.handleKeyPress);
+  }
+
   render() {
 
-    // HERO INITIAL POSITIONING
+    // HERO POSITION
     const heroPosition = this.props.gridFull;
-    let coordenateX = 1;
-    let coordenateY = 1;
-    heroPosition[coordenateX][coordenateY] = true;
-
-    //
+    heroPosition[this.state.coordenateX][this.state.coordenateY] = true;
 
     // DRAW THE GRID
     const width = this.props.cols * 20;
@@ -56,9 +71,11 @@ class Grid extends React.Component {
     for (let i = 0; i < this.props.rows; i++) {
       for (let j = 0; j < this.props.cols; j++) {
         let boxId = i + "_" + j;
+
         boxClass = heroPosition[i][j]
           ? "box on"
           : "box off";
+
         rowsArr.push(<Box boxClass={boxClass} key={boxId} boxId={boxId} row={i} col={j}/>)
       }
     }

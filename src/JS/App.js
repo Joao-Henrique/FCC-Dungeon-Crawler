@@ -13,7 +13,6 @@ class App extends Component {
     this.rows = 20;
 
     this.state = {
-      generation: 0,
       gridFull: Array(this.rows)
         .fill()
         .map(() => Array(this.cols).fill(false))
