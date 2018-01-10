@@ -70,13 +70,27 @@ class Grid extends Component {
     let boxClass = "";
     for (let i = 0; i < this.props.rows; i++) {
       for (let j = 0; j < this.props.cols; j++) {
-        let boxId = i + "_" + j;
+        const boxId = i + "_" + j;
+        const boxPosition = this.props.gridFull[i][j];
 
-        boxClass = heroPosition[i][j]
-          ? "box on"
-          : "box off";
+        // VERIFY CONDITIONS BASED ON STATE TO UPDATE
+        switch (boxPosition) {
+          case heroPosition[10][10]:
+            (boxClass = "box on");
+            break;
+          default:
+            (boxClass = "box off");
+            break;
+        }
 
-        rowsArr.push(<Box boxClass={boxClass} key={boxId} boxId={boxId} row={i} col={j}/>)
+        // UPDATE BOX PROPERTIES
+        rowsArr.push(<Box
+          boxClass={boxClass}
+          key={boxId}
+          boxId={boxId}
+          row={i}
+          col={j}
+          boxPosition={boxPosition}/>)
       }
     }
 
