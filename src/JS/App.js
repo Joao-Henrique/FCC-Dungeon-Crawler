@@ -19,6 +19,19 @@ class App extends Component {
     }
   }
 
+  // UPDATE STATE WITH COODENATES SENT FROM CHILD(GRID) COMPONENT
+  updateHeroNextPosition = (y, x) => {
+    let stateCopy = Object.assign({}, this.state);
+    stateCopy.gridFull[x][y] = true;
+    this.setState(stateCopy);
+  }
+
+  updateHeroLastPosition = (y, x) => {
+    let stateCopy = Object.assign({}, this.state);
+    stateCopy.gridFull[x][y] = false;
+    this.setState(stateCopy);
+  }
+
   render() {
     return (
       <div className="App">
@@ -31,7 +44,12 @@ class App extends Component {
           <div className="col-md-6 projectSection">
             <div className="wraper">
               <Menu/>
-              <Grid gridFull={this.state.gridFull} rows={this.rows} cols={this.cols}/>
+              <Grid
+                gridFull={this.state.gridFull}
+                updateHeroNextPosition={this.updateHeroNextPosition}
+                updateHeroLastPosition={this.updateHeroLastPosition}
+                rows={this.rows}
+                cols={this.cols}/>
             </div>
           </div>
           <div className="col-md-6 information">
