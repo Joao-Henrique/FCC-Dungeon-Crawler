@@ -12,8 +12,9 @@ class App extends Component {
     this.cols = 30;
     this.rows = 20;
 
+    // 1 - here it builds the board
     this.state = {
-      gridFull: Array(this.rows)
+      gameBoard: Array(this.rows)
         .fill()
         .map(() => Array(this.cols).fill(false))
     }
@@ -21,14 +22,17 @@ class App extends Component {
 
   // UPDATE STATE WITH COODENATES SENT FROM CHILD(GRID) COMPONENT
   updateHeroNextPosition = (y, x) => {
-    let stateCopy = Object.assign({}, this.state);
-    stateCopy.gridFull[x][y] = true;
-    this.setState(stateCopy);
-  }
 
-  updateHeroLastPosition = (y, x) => {
+    // 2 - here it builds the board again ...to make sure everything stays false
+    this.setState({
+      gameBoard: Array(this.rows)
+        .fill()
+        .map(() => Array(this.cols).fill(false))
+    });
+
+    // 3 - and finaly it updates the "hero" position
     let stateCopy = Object.assign({}, this.state);
-    stateCopy.gridFull[x][y] = false;
+    stateCopy.gameBoard[x][y] = true;
     this.setState(stateCopy);
   }
 
@@ -45,7 +49,7 @@ class App extends Component {
             <div className="wraper">
               <Menu/>
               <Grid
-                gridFull={this.state.gridFull}
+                gameBoard={this.state.gameBoard}
                 updateHeroNextPosition={this.updateHeroNextPosition}
                 updateHeroLastPosition={this.updateHeroLastPosition}
                 rows={this.rows}

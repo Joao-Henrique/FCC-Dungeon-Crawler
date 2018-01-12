@@ -99,17 +99,6 @@ class Grid extends Component {
     sendNextPositionToParent();
   }
 
-  componentWillUpdate() {
-    const sendLastPositionToParent = () => {
-      let coordY = this.state.hero.position.coordenateY;
-      let coordX = this.state.hero.position.coordenateX;
-      this
-        .props
-        .updateHeroLastPosition(coordY, coordX);
-    }
-    sendLastPositionToParent();
-  }
-
   render() {
 
     // DRAW THE GRID
@@ -119,7 +108,7 @@ class Grid extends Component {
     for (let i = 0; i < this.props.rows; i++) {
       for (let j = 0; j < this.props.cols; j++) {
         const boxId = i + "_" + j;
-        const boxPosition = this.props.gridFull[i][j];
+        const boxPosition = this.props.gameBoard[i][j];
 
         // VERIFY CONDITIONS BASED ON STATE TO UPDATE
         switch (boxPosition) {
