@@ -3,102 +3,6 @@ import Box from './Box';
 
 class Grid extends Component {
 
-  constructor() {
-    super();
-    this.state = {
-
-      //HERO
-      hero: {
-        position: {
-          coordenateX: 10,
-          coordenateY: 10
-        }
-      }
-    }
-  }
-
-  // MOVE HERO BASED ON USER INPUT
-  handleKeyPress = (e) => {
-
-    const changePositionX = (value) => {
-      this.setState({
-        hero: {
-          position: {
-            ...this.state.hero.position,
-            coordenateX: this.state.hero.position.coordenateX + value
-          }
-        }
-      });
-    }
-
-    const changePositionY = (value) => {
-      this.setState({
-        hero: {
-          position: {
-            ...this.state.hero.position,
-            coordenateY: this.state.hero.position.coordenateY + value
-          }
-        }
-      });
-    }
-
-    // FUNCTION TO SEND EVENT TO PARENT COMPONENT - THIS FUNCTION IS BEING DEFINED
-    // TWICE BECAUSE OF SCOOPE - HAVE TO DEAL WITH THAT LATER
-    const sendNextPositionToParent = () => {
-      let coordY = this.state.hero.position.coordenateY;
-      let coordX = this.state.hero.position.coordenateX;
-      this
-        .props
-        .updateHeroNextPosition(coordY, coordX);
-    }
-
-    switch (e.keyCode) {
-        // up
-      case 38:
-      case 87:
-        changePositionX(-1);
-        sendNextPositionToParent();
-        break;
-        // right
-      case 39:
-      case 68:
-        changePositionY(1);
-        sendNextPositionToParent();
-        break;
-        // down
-      case 40:
-      case 83:
-        changePositionX(1);
-        sendNextPositionToParent();
-        break;
-        // left
-      case 37:
-      case 65:
-        changePositionY(-1);
-        sendNextPositionToParent();
-        break;
-      default:
-        return;
-    }
-  }
-
-  // LISTEN FOR USER INPUT
-  componentDidMount() {
-
-    // FUNCTION TO SEND EVENT TO PARENT COMPONENT - THIS FUNCTION IS BEING DEFINED
-    // TWICE BECAUSE OF SCOOPE - HAVE TO DEAL WITH THAT LATER
-    const sendNextPositionToParent = () => {
-      let coordY = this.state.hero.position.coordenateY;
-      let coordX = this.state.hero.position.coordenateX;
-      this
-        .props
-        .updateHeroNextPosition(coordY, coordX);
-    }
-
-    window.addEventListener('keydown', this.handleKeyPress);
-    sendNextPositionToParent();
-  }
-
   render() {
 
     // DRAW THE GRID
@@ -112,7 +16,7 @@ class Grid extends Component {
 
         // VERIFY CONDITIONS BASED ON STATE TO UPDATE
         switch (boxPosition) {
-          case true:
+          case "heroCell":
             (boxClass = "box on");
             break;
           default:

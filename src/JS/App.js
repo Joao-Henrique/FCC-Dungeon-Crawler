@@ -12,28 +12,128 @@ class App extends Component {
     this.cols = 30;
     this.rows = 20;
 
-    // 1 - here it builds the board
     this.state = {
+
+      // GAMEBOARD
       gameBoard: Array(this.rows)
         .fill()
-        .map(() => Array(this.cols).fill(false))
+        .map(() => Array(this.cols).fill(false)),
+
+      // HERO
+      hero: {
+        position: {
+          coordenateX: 10,
+          coordenateY: 10
+        }
+      }
     }
   }
 
-  // UPDATE STATE WITH COODENATES SENT FROM CHILD(GRID) COMPONENT
-  updateHeroNextPosition = (y, x) => {
+  // MOVE HERO BASED ON USER INPUT
+  handleKeyPress = (e) => {
 
-    // 2 - here it builds the board again ...to make sure everything stays false
-    this.setState({
-      gameBoard: Array(this.rows)
-        .fill()
-        .map(() => Array(this.cols).fill(false))
-    });
+    const changePositionX = (value) => {
+      this.setState({
+        hero: {
+          position: {
+            ...this.state.hero.position,
+            coordenateX: this.state.hero.position.coordenateX + value
+          }
+        }
+      });
+    }
 
-    // 3 - and finaly it updates the "hero" position
-    let stateCopy = Object.assign({}, this.state);
-    stateCopy.gameBoard[x][y] = true;
-    this.setState(stateCopy);
+    const changePositionY = (value) => {
+      this.setState({
+        hero: {
+          position: {
+            ...this.state.hero.position,
+            coordenateY: this.state.hero.position.coordenateY + value
+          }
+        }
+      });
+    }
+
+    // UPDATES GAMEBOARD
+    const updateGameBoard = () => {
+
+      // RETURN THE EXACT CELL WHERE HERO IS
+      let coordY = this.state.hero.position.coordenateY;
+      let coordX = this.state.hero.position.coordenateX;
+
+      // COPIES THE GAMEBOARD
+      let stateCopy = Object.assign({}, this.state);
+      // UPDATES ITEMS POSITIONS
+      for (let i = 0; i < this.cols; i++) {
+        for (let j = 0; j < this.rows; j++) {
+          if (coordY === i && coordX === j) {
+            stateCopy.gameBoard[j][i] = "heroCell";
+          } else {
+            stateCopy.gameBoard[j][i] = "floorCell";
+          }
+        }
+      }
+      this.setState(stateCopy);
+    }
+
+    // MOVES THE HERO WHEN USER PRESSES KEY
+    switch (e.keyCode) {
+        // up
+      case 38:
+      case 87:
+        changePositionX(-1);
+        updateGameBoard();
+        break;
+        // right
+      case 39:
+      case 68:
+        changePositionY(1);
+        updateGameBoard();
+        break;
+        // down
+      case 40:
+      case 83:
+        changePositionX(1);
+        updateGameBoard();
+        break;
+        // left
+      case 37:
+      case 65:
+        changePositionY(-1);
+        updateGameBoard();
+        break;
+      default:
+        return;
+    }
+  }
+
+  // LISTEN FOR USER INPUT
+  componentDidMount() {
+    window.addEventListener('keydown', this.handleKeyPress);
+
+    // UPDATES GAMEBOARD - THIS FUNCTION IS DEFINED TWICE - IT WILL BE DEALTH WITH
+    // ASAP
+    const updateGameBoard = () => {
+
+      // RETURN THE EXACT CELL WHERE HERO IS
+      let coordY = this.state.hero.position.coordenateY;
+      let coordX = this.state.hero.position.coordenateX;
+
+      // COPIES THE GAMEBOARD
+      let stateCopy = Object.assign({}, this.state);
+      // UPDATES ITEMS POSITIONS
+      for (let i = 0; i < this.cols; i++) {
+        for (let j = 0; j < this.rows; j++) {
+          if (coordY === i && coordX === j) {
+            stateCopy.gameBoard[j][i] = "heroCell";
+          } else {
+            stateCopy.gameBoard[j][i] = "floorCell";
+          }
+        }
+      }
+      this.setState(stateCopy);
+    }
+    updateGameBoard();
   }
 
   render() {
@@ -48,12 +148,7 @@ class App extends Component {
           <div className="col-md-6 projectSection">
             <div className="wraper">
               <Menu/>
-              <Grid
-                gameBoard={this.state.gameBoard}
-                updateHeroNextPosition={this.updateHeroNextPosition}
-                updateHeroLastPosition={this.updateHeroLastPosition}
-                rows={this.rows}
-                cols={this.cols}/>
+              <Grid gameBoard={this.state.gameBoard} rows={this.rows} cols={this.cols}/>
             </div>
           </div>
           <div className="col-md-6 information">
