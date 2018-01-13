@@ -17,14 +17,30 @@ class App extends Component {
       // GAMEBOARD
       gameBoard: Array(this.rows)
         .fill()
-        .map(() => Array(this.cols).fill(false)),
+        .map(() => Array(this.cols).fill("floor")),
 
       // HERO
       hero: {
         position: {
           coordenateX: 10,
           coordenateY: 10
-        }
+        },
+        health: 100,
+        weapon: "Stick",
+        atack: 10,
+        level: 1,
+        xp: 30,
+        dungeon: 1
+      },
+      // ENEMY 1
+      enemy1: {
+        position: {
+          coordenateX: 5,
+          coordenateY: 5
+        },
+        health: 100,
+        atack: 10,
+        level: 1
       }
     }
   }
@@ -57,17 +73,22 @@ class App extends Component {
     // UPDATES GAMEBOARD
     const updateGameBoard = () => {
 
-      // RETURN THE EXACT CELL WHERE HERO IS
-      let coordY = this.state.hero.position.coordenateY;
-      let coordX = this.state.hero.position.coordenateX;
+      // hero
+      let heroCoordY = this.state.hero.position.coordenateY;
+      let heroCoordX = this.state.hero.position.coordenateX;
+      // enemy 1
+      let enemy1CoordY = this.state.enemy1.position.coordenateY;
+      let enemy1CoordX = this.state.enemy1.position.coordenateX;
 
       // COPIES THE GAMEBOARD
       let stateCopy = Object.assign({}, this.state);
       // UPDATES ITEMS POSITIONS
       for (let i = 0; i < this.cols; i++) {
         for (let j = 0; j < this.rows; j++) {
-          if (coordY === i && coordX === j) {
+          if (heroCoordY === i && heroCoordX === j) {
             stateCopy.gameBoard[j][i] = "heroCell";
+          } else if (enemy1CoordY === i && enemy1CoordX === j) {
+            stateCopy.gameBoard[j][i] = "enemy1Cell";
           } else {
             stateCopy.gameBoard[j][i] = "floorCell";
           }
@@ -147,7 +168,7 @@ class App extends Component {
         <div className="row">
           <div className="col-md-6 projectSection">
             <div className="wraper">
-              <Menu/>
+              <Menu heroStats={this.state.hero}/>
               <Grid gameBoard={this.state.gameBoard} rows={this.rows} cols={this.cols}/>
             </div>
           </div>

@@ -17,10 +17,13 @@ class Grid extends Component {
         // VERIFY CONDITIONS BASED ON STATE TO UPDATE
         switch (boxPosition) {
           case "heroCell":
-            (boxClass = "box on");
+            (boxClass = "box hero");
+            break;
+          case "enemy1Cell":
+            (boxClass = "box enemy");
             break;
           default:
-            (boxClass = "box off");
+            (boxClass = "box floor");
             break;
         }
 

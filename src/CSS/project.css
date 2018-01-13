@@ -16,11 +16,14 @@ p {
   width: 20px;
   height: 20px;
 }
-.off {
+.floor {
   background-color: rgb(70, 70, 70);
 }
-.on {
+.hero {
   background-color: #4CAF50;
+}
+.enemy {
+  background-color: red;
 }
 .box:hover {
   background-color: yellow;

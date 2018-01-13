@@ -7,19 +7,20 @@ class Menu extends React.Component {
       <div className="menuSection">
 
         <h4>Health:</h4>
-        <p>100</p>
+        <p>{this.props.heroStats.health}</p>
 
         <h4>Weapon:</h4>
-        <p>Stick</p>
+        <p>{this.props.heroStats.weapon}</p>
 
         <h4>Atack:</h4>
-        <p>7</p>
+        <p>{this.props.heroStats.atack}</p>
 
         <h4>Next Level:</h4>
-        <p>60 XP</p>
+        <p>{this.props.heroStats.xp}
+          XP</p>
 
         <h4>Dungeon:</h4>
-        <p>1</p>
+        <p>{this.props.heroStats.dungeon}</p>
 
       </div>
     );
