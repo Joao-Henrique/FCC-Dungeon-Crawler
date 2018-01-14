@@ -16,6 +16,9 @@ p {
   width: 20px;
   height: 20px;
 }
+.wall {
+  background-color: rgb(252, 255, 66);
+}
 .floor {
   background-color: rgb(70, 70, 70);
 }

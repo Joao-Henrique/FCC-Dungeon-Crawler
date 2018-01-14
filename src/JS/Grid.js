@@ -16,11 +16,14 @@ class Grid extends Component {
 
         // VERIFY CONDITIONS BASED ON STATE TO UPDATE
         switch (boxPosition) {
-          case "heroCell":
+          case "1":
             (boxClass = "box hero");
             break;
-          case "enemy1Cell":
+          case "2":
             (boxClass = "box enemy");
+            break;
+          case "9":
+            (boxClass = "box wall");
             break;
           default:
             (boxClass = "box floor");
@@ -34,7 +37,8 @@ class Grid extends Component {
           boxId={boxId}
           row={i}
           col={j}
-          boxPosition={boxPosition}/>)
+          boxPosition={boxPosition}
+          selectBox={this.props.selectBox}/>)
       }
     }
 

@@ -21,26 +21,12 @@ class App extends Component {
 
       // HERO
       hero: {
-        position: {
-          coordenateX: 10,
-          coordenateY: 10
-        },
         health: 100,
         weapon: "Stick",
         atack: 10,
         level: 1,
         xp: 30,
         dungeon: 1
-      },
-      // ENEMY 1
-      enemy1: {
-        position: {
-          coordenateX: 5,
-          coordenateY: 5
-        },
-        health: 100,
-        atack: 10,
-        level: 1
       }
     }
   }
@@ -48,49 +34,41 @@ class App extends Component {
   // MOVE HERO BASED ON USER INPUT
   handleKeyPress = (e) => {
 
-    const changePositionX = (value) => {
-      this.setState({
-        hero: {
-          position: {
-            ...this.state.hero.position,
-            coordenateX: this.state.hero.position.coordenateX + value
-          }
-        }
-      });
-    }
-
-    const changePositionY = (value) => {
-      this.setState({
-        hero: {
-          position: {
-            ...this.state.hero.position,
-            coordenateY: this.state.hero.position.coordenateY + value
-          }
-        }
-      });
-    }
-
     // UPDATES GAMEBOARD
-    const updateGameBoard = () => {
+    const updateGameBoard = (y, x) => {
 
-      // hero
-      let heroCoordY = this.state.hero.position.coordenateY;
-      let heroCoordX = this.state.hero.position.coordenateX;
-      // enemy 1
-      let enemy1CoordY = this.state.enemy1.position.coordenateY;
-      let enemy1CoordX = this.state.enemy1.position.coordenateX;
-
-      // COPIES THE GAMEBOARD
+      // UPDATE HERO MOVE BASED ON SPECIFIC CONDITIONS COPIES THE GAMEBOARD
       let stateCopy = Object.assign({}, this.state);
       // UPDATES ITEMS POSITIONS
       for (let i = 0; i < this.cols; i++) {
         for (let j = 0; j < this.rows; j++) {
-          if (heroCoordY === i && heroCoordX === j) {
-            stateCopy.gameBoard[j][i] = "heroCell";
-          } else if (enemy1CoordY === i && enemy1CoordX === j) {
-            stateCopy.gameBoard[j][i] = "enemy1Cell";
-          } else {
-            stateCopy.gameBoard[j][i] = "floorCell";
+
+          const heroMoveValidation = () => {
+            if (this.state.gameBoard[j + x][i + y] === "9") {
+              stateCopy.gameBoard[j][i] = "1"
+            } else if (this.state.gameBoard[j + x][i + y] === "2") {
+              stateCopy.gameBoard[j][i] = "1"
+            } else {
+              stateCopy.gameBoard[j + x][i + y] = "1";
+              stateCopy.gameBoard[j][i] = "0"
+            }
+          }
+
+          switch (this.state.gameBoard[j][i]) {
+              //wall
+            case "9":
+              stateCopy.gameBoard[j][i] = "9";
+              break;
+              //enemy
+            case "2":
+              stateCopy.gameBoard[j][i] = "2";
+              break;
+              //hero
+            case "1":
+              heroMoveValidation();
+              break;
+            default:
+              stateCopy.gameBoard[j][i] = "0";
           }
         }
       }
@@ -102,60 +80,54 @@ class App extends Component {
         // up
       case 38:
       case 87:
-        changePositionX(-1);
-        updateGameBoard();
+        updateGameBoard(0, -1);
         break;
         // right
       case 39:
       case 68:
-        changePositionY(1);
-        updateGameBoard();
+        updateGameBoard(1, 0);
         break;
         // down
       case 40:
       case 83:
-        changePositionX(1);
-        updateGameBoard();
+        updateGameBoard(0, 1);
         break;
         // left
       case 37:
       case 65:
-        changePositionY(-1);
-        updateGameBoard();
+        updateGameBoard(-1, 0);
         break;
       default:
         return;
     }
   }
 
+  componentWillMount() {
+    this.setState({gameBoard: firstDungeon})
+  }
   // LISTEN FOR USER INPUT
   componentDidMount() {
     window.addEventListener('keydown', this.handleKeyPress);
-
-    // UPDATES GAMEBOARD - THIS FUNCTION IS DEFINED TWICE - IT WILL BE DEALTH WITH
-    // ASAP
-    const updateGameBoard = () => {
-
-      // RETURN THE EXACT CELL WHERE HERO IS
-      let coordY = this.state.hero.position.coordenateY;
-      let coordX = this.state.hero.position.coordenateX;
-
-      // COPIES THE GAMEBOARD
-      let stateCopy = Object.assign({}, this.state);
-      // UPDATES ITEMS POSITIONS
-      for (let i = 0; i < this.cols; i++) {
-        for (let j = 0; j < this.rows; j++) {
-          if (coordY === i && coordX === j) {
-            stateCopy.gameBoard[j][i] = "heroCell";
-          } else {
-            stateCopy.gameBoard[j][i] = "floorCell";
-          }
-        }
-      }
-      this.setState(stateCopy);
-    }
-    updateGameBoard();
   }
+
+  ////////////////////////////////////////////////////////////////////////////////
+  /* FUNCTION TO DRAW THE MAPS */
+  ////////////////////////////////////////////////////////////////////////////////
+  selectBox = (row, col) => {
+    const arrayClone = (arr) => {
+      return JSON.parse(JSON.stringify(arr));
+    }
+    let gridCopy = arrayClone(this.state.gameBoard);
+    gridCopy[row][col] === "9"
+      ? gridCopy[row][col] = "0"
+      : gridCopy[row][col] = "9";
+
+    this.setState({gameBoard: gridCopy})
+    //console.log(this.state.gameBoard);
+  }
+  ////////////////////////////////////////////////////////////////////////////////
+  /* FUNCTION TO DRAW THE MAPS */
+  ////////////////////////////////////////////////////////////////////////////////
 
   render() {
     return (
@@ -169,7 +141,11 @@ class App extends Component {
           <div className="col-md-6 projectSection">
             <div className="wraper">
               <Menu heroStats={this.state.hero}/>
-              <Grid gameBoard={this.state.gameBoard} rows={this.rows} cols={this.cols}/>
+              <Grid
+                selectBox={this.selectBox}
+                gameBoard={this.state.gameBoard}
+                rows={this.rows}
+                cols={this.cols}/>
             </div>
           </div>
           <div className="col-md-6 information">
@@ -181,5 +157,651 @@ class App extends Component {
     )
   }
 }
+
+///////////////////////////////////////////
+/* DUNGEON 1 MAP */
+///////////////////////////////////////////
+let firstDungeon = [
+  [
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0"
+  ],
+  [
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "o",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0"
+  ],
+  [
+    "0",
+    "0",
+    "0",
+    "2",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "2",
+    "0",
+    "0"
+  ],
+  [
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0"
+  ],
+  [
+    "0",
+    "9",
+    "9",
+    "9",
+    "9",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "9",
+    "9",
+    "9",
+    "0",
+    "0",
+    "0",
+    "9",
+    "9",
+    "0",
+    "0",
+    "0",
+    "0",
+    "9",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0"
+  ],
+  [
+    "0",
+    "9",
+    "0",
+    "0",
+    "0",
+    "9",
+    "0",
+    "0",
+    "0",
+    "9",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "9",
+    "0",
+    "0",
+    "9",
+    "0",
+    "0",
+    "0",
+    "0",
+    "9",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0"
+  ],
+  [
+    "0",
+    "9",
+    "0",
+    "0",
+    "0",
+    "0",
+    "9",
+    "0",
+    "9",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "9",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "9",
+    "0",
+    "0",
+    "0",
+    "9",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0"
+  ],
+  [
+    "0",
+    "9",
+    "0",
+    "0",
+    "0",
+    "0",
+    "9",
+    "0",
+    "9",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "9",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "9",
+    "0",
+    "0",
+    "0",
+    "9",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0"
+  ],
+  [
+    "0",
+    "9",
+    "0",
+    "0",
+    "0",
+    "9",
+    "0",
+    "0",
+    "0",
+    "9",
+    "0",
+    "0",
+    "0",
+    "0",
+    "9",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "9",
+    "0",
+    "0",
+    "0",
+    "9",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0"
+  ],
+  [
+    "0",
+    "9",
+    "9",
+    "9",
+    "9",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "9",
+    "9",
+    "0",
+    "0",
+    "9",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "9",
+    "0",
+    "0",
+    "0",
+    "9",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0"
+  ],
+  [
+    "0",
+    "9",
+    "0",
+    "0",
+    "0",
+    "9",
+    "0",
+    "0",
+    "0",
+    "0",
+    "1",
+    "0",
+    "9",
+    "0",
+    "9",
+    "0",
+    "0",
+    "2",
+    "0",
+    "0",
+    "9",
+    "0",
+    "0",
+    "0",
+    "9",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0"
+  ],
+  [
+    "0",
+    "9",
+    "0",
+    "0",
+    "0",
+    "0",
+    "9",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "9",
+    "0",
+    "9",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "9",
+    "0",
+    "0",
+    "0",
+    "9",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0"
+  ],
+  [
+    "0",
+    "9",
+    "0",
+    "0",
+    "0",
+    "0",
+    "9",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "9",
+    "0",
+    "0",
+    "9",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "9",
+    "0",
+    "9",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0"
+  ],
+  [
+    "0",
+    "9",
+    "9",
+    "9",
+    "9",
+    "9",
+    "0",
+    "0",
+    "9",
+    "9",
+    "9",
+    "9",
+    "0",
+    "0",
+    "2",
+    "0",
+    "9",
+    "9",
+    "9",
+    "0",
+    "0",
+    "0",
+    "9",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0"
+  ],
+  [
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0"
+  ],
+  [
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "2",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0"
+  ],
+  [
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0"
+  ],
+  [
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0"
+  ],
+  [
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0"
+  ],
+  [
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "2",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0"
+  ]
+];
 
 export default App;
