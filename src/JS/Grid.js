@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import Box from './Box';
 
 class Grid extends Component {
@@ -22,6 +22,18 @@ class Grid extends Component {
           case "2":
             (boxClass = "box enemy");
             break;
+          case "5":
+            (boxClass = "box weapon");
+            break;
+          case "6":
+            (boxClass = "box xp");
+            break;
+          case "7":
+            (boxClass = "box health");
+            break;
+          case "8":
+            (boxClass = "box portal");
+            break;
           case "9":
             (boxClass = "box wall");
             break;
@@ -38,7 +50,7 @@ class Grid extends Component {
           row={i}
           col={j}
           boxPosition={boxPosition}
-          selectBox={this.props.selectBox}/>)
+          selectBox={this.props.selectBox} />)
       }
     }
 

@@ -16,17 +16,41 @@ p {
   width: 20px;
   height: 20px;
 }
-.wall {
-  background-color: rgb(252, 255, 66);
-}
-.floor {
-  background-color: rgb(70, 70, 70);
-}
 .hero {
-  background-color: #4CAF50;
+  background-color: lightsalmon;
+  border-radius: 6px;
+  border-width: 1px;
 }
 .enemy {
   background-color: red;
+  border-radius: 7px;
+  border-width: 1px;
+}
+.weapon {
+  background-color: blue;
+  border-width: 4px;
+  border-color: white;
+}
+.xp {
+  background-color: yellow;
+  border-radius: 10px;
+  border-width: .5px;
+}
+.health {
+  background-color: green;
+  border-width: 4px;
+  border-color: white;
+  border-radius: 10px;
+
+}
+.portal {
+  background-color: blueviolet;
+}
+.wall {
+  background-color: darkslategray;
+}
+.floor {
+  background-color: white;
 }
 .box:hover {
   background-color: yellow;
