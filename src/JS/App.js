@@ -15,15 +15,16 @@ class App extends Component {
       gameBoard: [],
       hero: {
         health: 100,
-        weapon: "Stick",
-        atack: 10,
+        weapon: "Hands",
+        weaponChoice: [
+          "Stick", "Nife", "Catana", "ChainSaw"
+        ],
+        weaponDamage: 1,
+        enemyHealth: 100,
         level: 1,
-        xp: 30,
+        toNextLevel: 2500,
+        score: 0,
         dungeon: 1
-      },
-      enemy: {
-        health: 100,
-        level: 1
       }
     }
   }
@@ -39,11 +40,50 @@ class App extends Component {
 
           const heroMoveValidation = () => {
             switch (this.state.gameBoard[j + x][i + y]) {
+                //wall
               case "9":
                 stateCopy.gameBoard[j][i] = "1";
                 break;
+                //enemy
               case "2":
+                if (stateCopy.hero.health < 0) {
+                  stateCopy.gameBoard[j][i] = "0";
+                  alert("GAME OVER!!! You are a dead box ;)")
+                } else if (stateCopy.hero.enemyHealth > 0) {
+                  stateCopy.gameBoard[j][i] = "1";
+                  stateCopy.hero.enemyHealth = stateCopy.hero.enemyHealth - (this.generateRandomNumber(30, 20) * (stateCopy.hero.weaponDamage + stateCopy.hero.level - 1));
+                  stateCopy.hero.health = stateCopy.hero.health - (this.generateRandomNumber(30, 20) * stateCopy.hero.dungeon);
+                } else {
+                  stateCopy.gameBoard[j + x][i + y] = "0";
+                  stateCopy.hero.enemyHealth = 100;
+                  stateCopy.hero.score += 100;
+                  stateCopy.hero.toNextLevel -= 100;
+                }
+                break;
+                //weapon
+              case "5":
+                stateCopy.gameBoard[j + x][i + y] = "0";
                 stateCopy.gameBoard[j][i] = "1";
+                stateCopy.hero.weapon = stateCopy.hero.weaponChoice[stateCopy.hero.dungeon - 1];
+                alert("You just found a " + stateCopy.hero.weaponChoice[stateCopy.hero.dungeon - 1] + " to fight with!");
+                stateCopy.hero.weaponDamage++;
+                break;
+                //score
+              case "6":
+                stateCopy.gameBoard[j + x][i + y] = "0";
+                stateCopy.gameBoard[j][i] = "1";
+                stateCopy.hero.score += 100;
+                stateCopy.hero.toNextLevel -= 100;
+                break;
+                //health
+              case "7":
+                stateCopy.gameBoard[j + x][i + y] = "0";
+                stateCopy.gameBoard[j][i] = "1";
+                stateCopy.hero.health = stateCopy.hero.health + 100;
+                break;
+                //portal
+              case "8":
+                alert("You have cleared the dungeon nº " + stateCopy.hero.dungeon + " !!!");
                 break;
               default:
                 stateCopy.gameBoard[j + x][i + y] = "1";
@@ -59,6 +99,22 @@ class App extends Component {
               //enemy
             case "2":
               stateCopy.gameBoard[j][i] = "2";
+              break;
+              //weapon
+            case "5":
+              stateCopy.gameBoard[j][i] = "5";
+              break;
+              //score
+            case "6":
+              stateCopy.gameBoard[j][i] = "6";
+              break;
+              //health
+            case "7":
+              stateCopy.gameBoard[j][i] = "7";
+              break;
+              //portal
+            case "8":
+              stateCopy.gameBoard[j][i] = "8";
               break;
               //hero
             case "1":
@@ -101,15 +157,15 @@ class App extends Component {
   ///////////////////////////////////////////////////////////
   /* ALL ITEMS AND ENEMIES ARE RANDOMLY PLACED ON THE MAP */
   ///////////////////////////////////////////////////////////
-  generateRandomNumber = (max) => {
-    return Math.floor(Math.random() * Math.floor(max));
+  generateRandomNumber = (max, min) => {
+    return Math.floor(Math.random() * (max - (min + 1)) + min);
   }
 
   randomlyPlaceItem = (item, numberOfItems) => {
     let stateCopy = Object.assign({}, this.state);
     for (let i = numberOfItems; i > 0;) {
-      let row = this.generateRandomNumber(this.rows);
-      let col = this.generateRandomNumber(this.cols);
+      let row = this.generateRandomNumber(this.rows, 1);
+      let col = this.generateRandomNumber(this.cols, 1);
       if (stateCopy.gameBoard[row][col] === "0") {
         stateCopy.gameBoard[row][col] = item;
         i--;
@@ -127,15 +183,24 @@ class App extends Component {
   }
 
   componentDidMount() {
+    window.addEventListener('keydown', this.handleKeyPress);
     //enemy
     this.randomlyPlaceItem("2", 10);
     //weapon
     this.randomlyPlaceItem("5", 1);
-    //xp
+    //score
     this.randomlyPlaceItem("6", 20);
     //health
-    this.randomlyPlaceItem("7", 10);
-    window.addEventListener('keydown', this.handleKeyPress);
+    this.randomlyPlaceItem("7", 8);
+  }
+
+  componentWillUpdate() {
+    if (this.state.hero.toNextLevel <= 0) {
+      let stateCopy = Object.assign({}, this.state);
+      stateCopy.hero.toNextLevel = 2500;
+      stateCopy.hero.level += 1;
+      this.setState(stateCopy);
+    }
   }
 
   ///////////////////////////////////////////////////////////

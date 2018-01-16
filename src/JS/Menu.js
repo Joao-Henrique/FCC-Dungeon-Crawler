@@ -12,12 +12,15 @@ class Menu extends React.Component {
         <h4>Weapon:</h4>
         <p>{this.props.heroStats.weapon}</p>
 
-        <h4>Atack:</h4>
-        <p>{this.props.heroStats.atack}</p>
+        <h4>Enemy:</h4>
+        <p>{this.props.heroStats.enemyHealth}</p>
 
-        <h4>Next Level:</h4>
-        <p>{this.props.heroStats.xp}
+        <h4>Score:</h4>
+        <p>{this.props.heroStats.score}
           XP</p>
+
+        <h4>Level:</h4>
+        <p>{this.props.heroStats.level}</p>
 
         <h4>Dungeon:</h4>
         <p>{this.props.heroStats.dungeon}</p>
