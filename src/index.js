@@ -6,4 +6,4 @@ import './CSS/footer.css';
 import './CSS/project.css';
 import App from './JS/App';
 
-ReactDOM.render(< App / >, document.getElementById('root'));
+ReactDOM.render(< App />, document.getElementById('root'));

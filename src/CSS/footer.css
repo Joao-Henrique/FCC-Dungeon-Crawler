@@ -92,9 +92,7 @@ footer {
     padding-top: 1.4em;
   }
   footer {
-    position: absolute;
-    position: fixed;
-    bottom: 0;
+    position: relative;
     height: 100px;
     background: black;
     height: 60px;
