@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
-import logo from '../IMG/logo.svg';
-
 import ProjectDescription from './ProjectDescription';
-import Menu from './Menu';
-import Grid from './Grid';
 import dungeon1 from '../Maps/dungeon1';
 import dungeon2 from '../Maps/dungeon2';
 import dungeon3 from '../Maps/dungeon3';
 import dungeon4 from '../Maps/dungeon4';
+import logo from '../IMG/logo.svg';
+import Menu from './Menu';
+import Grid from './Grid';
 
 class App extends Component {
   constructor() {
@@ -15,7 +14,7 @@ class App extends Component {
     this.cols = 30;
     this.rows = 20;
     this.state = {
-      gameBoard: [],
+      gameBoard: dungeon1,
       hero: {
         health: 100,
         weapon: "Hands",
@@ -25,6 +24,8 @@ class App extends Component {
         toNextLevel: 2500,
         score: 0,
         dungeon: 1,
+        nextDungeon: false,
+        placeItems: false,
         weaponChoice: ["Stick", "Nife", "Catana", "ChainSaw"]
       }
     }
@@ -35,7 +36,8 @@ class App extends Component {
   ///////////////////////////////////////////////////////////
   handleKeyPress = (e) => {
     e.preventDefault();
-    console.log(e.keyCode);
+
+
     const updateGameBoard = (y, x) => {
       let stateCopy = Object.assign({}, this.state);
       for (let i = 0; i < this.cols; i++) {
@@ -87,11 +89,30 @@ class App extends Component {
               //portal
               case "8":
                 alert("You have cleared the dungeon nº " + stateCopy.hero.dungeon + " !!!");
-                this.nextLevel();
+                nextLevel();
                 break;
               default:
                 stateCopy.gameBoard[j + x][i + y] = "1";
                 stateCopy.gameBoard[j][i] = "0";
+            }
+          }
+
+          const nextLevel = () => {
+            switch (this.state.hero.dungeon) {
+              case 0:
+                stateCopy.hero.nextDungeon = true;
+                break;
+              case 1:
+                stateCopy.hero.nextDungeon = true;
+
+                break;
+              case 2:
+                stateCopy.hero.nextDungeon = true;
+                break;
+              case 3:
+                stateCopy.hero.nextDungeon = true;
+                break;
+              default: alert("You have finished the game!!! Congrats!!!");
             }
           }
 
@@ -154,6 +175,9 @@ class App extends Component {
     }
   }
 
+
+
+
   ///////////////////////////////////////////////////////////
   /* ALL ITEMS AND ENEMIES ARE RANDOMLY PLACED ON THE MAP */
   ///////////////////////////////////////////////////////////
@@ -174,30 +198,7 @@ class App extends Component {
     this.setState(stateCopy)
   }
 
-  nextLevel = () => {
-    let stateCopy = Object.assign({}, this.state);
-    switch (stateCopy) {
-      case[]: dungeon1;
-        break;
-      case dungeon1: dungeon2;
-        break;
-      case dungeon2: dungeon3;
-        break;
-      case dungeon3: dungeon4;
-        break;
-    }
-  }
-
-
-  ///////////////////////////////////////////////////////////
-  /* LIFECYCLE METHODS */
-  ///////////////////////////////////////////////////////////
-  componentWillMount() {
-    this.setState({ gameBoard: dungeon1 })
-  }
-
-  componentDidMount() {
-    window.addEventListener('keydown', this.handleKeyPress);
+  randomlyPlaceAllItems = () => {
     //enemy
     this.randomlyPlaceItem("2", 10);
     //weapon
@@ -208,6 +209,26 @@ class App extends Component {
     this.randomlyPlaceItem("7", 8);
   }
 
+
+  ifNewMapPlaceItems = () => {
+    if (this.state.hero.placeItems === true) {
+      let stateCopy = Object.assign({}, this.state);
+      this.randomlyPlaceAllItems();
+      stateCopy.hero.placeItems = false;
+      this.setState(stateCopy);
+    }
+  }
+
+
+
+  ///////////////////////////////////////////////////////////
+  /* LIFECYCLE METHODS */
+  ///////////////////////////////////////////////////////////
+  componentDidMount() {
+    window.addEventListener('keydown', this.handleKeyPress);
+    this.randomlyPlaceAllItems();
+  }
+
   componentWillUpdate() {
     if (this.state.hero.toNextLevel <= 0) {
       let stateCopy = Object.assign({}, this.state);
@@ -215,8 +236,23 @@ class App extends Component {
       stateCopy.hero.level += 1;
       this.setState(stateCopy);
     }
+    if (this.state.hero.dungeon === 1 && this.state.hero.nextDungeon === true) {
+      let stateCopy = Object.assign({}, this.state);
+      stateCopy.hero.dungeon = 2;
+      stateCopy.hero.nextDungeon = false;
+      stateCopy.gameBoard = dungeon2;
+      stateCopy.hero.placeItems = true;
+      this.setState(stateCopy);
+    }
+    this.ifNewMapPlaceItems();
+  }
+
+  component() {
 
   }
+
+
+
 
   ///////////////////////////////////////////////////////////
   /* RENDER METHOD */
@@ -248,6 +284,9 @@ class App extends Component {
     )
   }
 
+
+
+
   ///////////////////////////////////////////////////////////
   /* ACTIVATE - IF YOU NEED TO DRAW NEW MAPS */
   ///////////////////////////////////////////////////////////
@@ -256,12 +295,12 @@ class App extends Component {
       return JSON.parse(JSON.stringify(arr));
     }
     let gridCopy = arrayClone(this.state.gameBoard);
-    gridCopy[row][col] === "9"
+    /* gridCopy[row][col] === "9"
       ? gridCopy[row][col] = "0"
       : gridCopy[row][col] = "9";
 
     this.setState({ gameBoard: gridCopy })
-    console.log(this.state.gameBoard);
+    console.log(gridCopy); */
   }
 }
 
