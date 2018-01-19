@@ -1,5 +1,24 @@
+
+///////////////////////////////////////////////////////////
+/* TODO LIST */
+///////////////////////////////////////////////////////////
+/*
+
+1 - UserStory - Much of the map is hidden. When I take a step, all spaces that are within a certain number of spaces from me are revealed.
+
+2 - UserStory - When I find and beat the boss, I win.
+
+3 - Bug - When you change level the items should atomaticly be placed on the board but, this only happens when you move the hero for the first time.
+
+4 - Bug - When hero moves to certain directions it goes all the way till the end. It should move one square at a time.
+
+5 - Bug - When hero dies, the map is not reseting properly. Parts of the map do not update as they should.
+
+*/
+
 import React, { Component } from 'react';
 import ProjectDescription from './ProjectDescription';
+import clearMap from '../Maps/clearMap';
 import dungeon1 from '../Maps/dungeon1';
 import dungeon2 from '../Maps/dungeon2';
 import dungeon3 from '../Maps/dungeon3';
@@ -16,10 +35,13 @@ class App extends Component {
     this.state = {
       gameBoard: dungeon1,
       hero: {
+        positionX: 0,
+        positionY: 0,
         health: 100,
         weapon: "Hands",
         weaponDamage: 1,
         enemyHealth: 100,
+        enemyLevel: 1,
         level: 1,
         toNextLevel: 2500,
         score: 0,
@@ -53,12 +75,13 @@ class App extends Component {
               //enemy
               case "2":
                 if (stateCopy.hero.health < 0) {
-                  stateCopy.gameBoard[j][i] = "0";
                   alert("GAME OVER!!! You are a dead box ;)")
+                  resetGame();
+                  this.componentDidMount();
                 } else if (stateCopy.hero.enemyHealth > 0) {
                   stateCopy.gameBoard[j][i] = "1";
                   stateCopy.hero.enemyHealth = stateCopy.hero.enemyHealth - (this.generateRandomNumber(30, 20) * (stateCopy.hero.weaponDamage + stateCopy.hero.level - 1));
-                  stateCopy.hero.health = stateCopy.hero.health - (this.generateRandomNumber(30, 20) * stateCopy.hero.dungeon);
+                  stateCopy.hero.health = stateCopy.hero.health - (this.generateRandomNumber(30, 20) * (stateCopy.hero.dungeon + stateCopy.hero.enemyLevel));
                 } else {
                   stateCopy.gameBoard[j + x][i + y] = "0";
                   stateCopy.hero.enemyHealth = 100;
@@ -98,6 +121,21 @@ class App extends Component {
             }
           }
 
+          const resetGame = () => {
+            let stateCopy = Object.assign({}, this.state);
+            stateCopy.hero.health = 100;
+            stateCopy.hero.weapon = "Hands";
+            stateCopy.hero.weaponDamage = 1;
+            stateCopy.hero.enemyHealth = 100;
+            stateCopy.hero.enemyLevel = 1;
+            stateCopy.hero.level = 1;
+            stateCopy.hero.score = 0;
+            stateCopy.hero.dungeon = 1;
+            stateCopy.hero.nextDungeon = false;
+            stateCopy.hero.placeItems = false;
+            this.setState(stateCopy);
+          }
+
           const nextLevel = () => {
             switch (this.state.hero.dungeon) {
               case 0:
@@ -105,7 +143,6 @@ class App extends Component {
                 break;
               case 1:
                 stateCopy.hero.nextDungeon = true;
-
                 break;
               case 2:
                 stateCopy.hero.nextDungeon = true;
@@ -117,6 +154,7 @@ class App extends Component {
             }
           }
 
+          // copies gameboard and moves the hero
           switch (this.state.gameBoard[j][i]) {
             //wall
             case "9":
@@ -145,6 +183,8 @@ class App extends Component {
             //hero
             case "1":
               heroMoveValidation();
+              stateCopy.hero.positionX = j;
+              stateCopy.hero.positionY = i;
               break;
             default:
               stateCopy.gameBoard[j][i] = "0";
@@ -154,6 +194,7 @@ class App extends Component {
       this.setState(stateCopy);
     }
 
+    // deals with user keypress
     switch (e.keyCode) {
       // up
       case 38:
@@ -237,8 +278,9 @@ class App extends Component {
       stateCopy.hero.toNextLevel = 2500;
       stateCopy.hero.level += 1;
       this.setState(stateCopy);
+      alert("You are getting stronger! Your skills have reach level " + stateCopy.hero.level + " !!!");
     }
-    // changes to next dungeon
+    // changes map to next dungeon
     if (this.state.hero.dungeon === 1 && this.state.hero.nextDungeon === true) {
       let stateCopy = Object.assign({}, this.state);
       stateCopy.hero.dungeon = 2;
@@ -280,11 +322,15 @@ class App extends Component {
           <div className="col-md-6 projectSection">
             <div className="wraper">
               <Menu heroStats={this.state.hero} />
-              <Grid
-                selectBox={this.selectBox}
-                gameBoard={this.state.gameBoard}
-                rows={this.rows}
-                cols={this.cols} />
+              <div id="container">
+                <Grid
+                  selectBox={this.selectBox}
+                  gameBoard={this.state.gameBoard}
+                  rows={this.rows}
+                  cols={this.cols}
+                  positionX={this.state.hero.positionX}
+                  positionY={this.state.hero.positionY} />
+              </div>
             </div>
           </div>
           <div className="col-md-6 information">

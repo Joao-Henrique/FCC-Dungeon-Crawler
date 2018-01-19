@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import Box from './Box';
 
 class Grid extends Component {
@@ -42,6 +42,11 @@ class Grid extends Component {
             break;
         }
 
+        // WILL TRY SOMETHING NEW HERE TOMOROW
+        /* switch (boxPosition) {
+          case
+        } */
+
         // UPDATE BOX PROPERTIES
         rowsArr.push(<Box
           boxClass={boxClass}
@@ -50,7 +55,7 @@ class Grid extends Component {
           row={i}
           col={j}
           boxPosition={boxPosition}
-          selectBox={this.props.selectBox}/>)
+          selectBox={this.props.selectBox} />)
       }
     }
 
