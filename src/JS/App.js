@@ -37,6 +37,7 @@ class App extends Component {
   handleKeyPress = (e) => {
     e.preventDefault();
 
+    this.ifNewMapPlaceItems();
 
     const updateGameBoard = (y, x) => {
       let stateCopy = Object.assign({}, this.state);
@@ -230,12 +231,14 @@ class App extends Component {
   }
 
   componentWillUpdate() {
+    // changes hero level every 2500xp
     if (this.state.hero.toNextLevel <= 0) {
       let stateCopy = Object.assign({}, this.state);
       stateCopy.hero.toNextLevel = 2500;
       stateCopy.hero.level += 1;
       this.setState(stateCopy);
     }
+    // changes to next dungeon
     if (this.state.hero.dungeon === 1 && this.state.hero.nextDungeon === true) {
       let stateCopy = Object.assign({}, this.state);
       stateCopy.hero.dungeon = 2;
@@ -243,14 +246,22 @@ class App extends Component {
       stateCopy.gameBoard = dungeon2;
       stateCopy.hero.placeItems = true;
       this.setState(stateCopy);
+    } else if (this.state.hero.dungeon === 2 && this.state.hero.nextDungeon === true) {
+      let stateCopy = Object.assign({}, this.state);
+      stateCopy.hero.dungeon = 3;
+      stateCopy.hero.nextDungeon = false;
+      stateCopy.gameBoard = dungeon3;
+      stateCopy.hero.placeItems = true;
+      this.setState(stateCopy);
+    } else if (this.state.hero.dungeon === 3 && this.state.hero.nextDungeon === true) {
+      let stateCopy = Object.assign({}, this.state);
+      stateCopy.hero.dungeon = 4;
+      stateCopy.hero.nextDungeon = false;
+      stateCopy.gameBoard = dungeon4;
+      stateCopy.hero.placeItems = true;
+      this.setState(stateCopy);
     }
-    this.ifNewMapPlaceItems();
   }
-
-  component() {
-
-  }
-
 
 
 
@@ -295,11 +306,11 @@ class App extends Component {
       return JSON.parse(JSON.stringify(arr));
     }
     let gridCopy = arrayClone(this.state.gameBoard);
-    /* gridCopy[row][col] === "9"
+    gridCopy[row][col] === "9"
       ? gridCopy[row][col] = "0"
       : gridCopy[row][col] = "9";
-
-    this.setState({ gameBoard: gridCopy })
+    // uncomment this part to activate
+    /* this.setState({ gameBoard: gridCopy })
     console.log(gridCopy); */
   }
 }
