@@ -18,7 +18,7 @@
 
 import React, { Component } from 'react';
 import ProjectDescription from './ProjectDescription';
-import clearMap from '../Maps/clearMap';
+/* import clearMap from '../Maps/clearMap'; */
 import dungeon1 from '../Maps/dungeon1';
 import dungeon2 from '../Maps/dungeon2';
 import dungeon3 from '../Maps/dungeon3';
@@ -62,9 +62,10 @@ class App extends Component {
     this.ifNewMapPlaceItems();
 
     const updateGameBoard = (y, x) => {
-      let stateCopy = Object.assign({}, this.state);
+      let stateCopy = this.state;
       for (let i = 0; i < this.cols; i++) {
         for (let j = 0; j < this.rows; j++) {
+
 
           const heroMoveValidation = () => {
             switch (this.state.gameBoard[j + x][i + y]) {
@@ -76,17 +77,15 @@ class App extends Component {
               case "2":
                 if (stateCopy.hero.health < 0) {
                   alert("GAME OVER!!! You are a dead box ;)")
-                  resetGame();
-                  this.componentDidMount();
                 } else if (stateCopy.hero.enemyHealth > 0) {
                   stateCopy.gameBoard[j][i] = "1";
                   stateCopy.hero.enemyHealth = stateCopy.hero.enemyHealth - (this.generateRandomNumber(30, 20) * (stateCopy.hero.weaponDamage + stateCopy.hero.level - 1));
                   stateCopy.hero.health = stateCopy.hero.health - (this.generateRandomNumber(30, 20) * (stateCopy.hero.dungeon + stateCopy.hero.enemyLevel));
                 } else {
                   stateCopy.gameBoard[j + x][i + y] = "0";
+                  stateCopy.hero.toNextLevel -= 100;
                   stateCopy.hero.enemyHealth = 100;
                   stateCopy.hero.score += 100;
-                  stateCopy.hero.toNextLevel -= 100;
                 }
                 break;
               //weapon
@@ -101,40 +100,42 @@ class App extends Component {
               case "6":
                 stateCopy.gameBoard[j + x][i + y] = "0";
                 stateCopy.gameBoard[j][i] = "1";
-                stateCopy.hero.score += 100;
                 stateCopy.hero.toNextLevel -= 100;
+                stateCopy.hero.score += 100;
                 break;
               //health
               case "7":
+                stateCopy.hero.health = stateCopy.hero.health + 100;
                 stateCopy.gameBoard[j + x][i + y] = "0";
                 stateCopy.gameBoard[j][i] = "1";
-                stateCopy.hero.health = stateCopy.hero.health + 100;
                 break;
               //portal
               case "8":
+                stateCopy.gameBoard[j][i] = "8";
                 alert("You have cleared the dungeon nº " + stateCopy.hero.dungeon + " !!!");
                 nextLevel();
                 break;
               default:
                 stateCopy.gameBoard[j + x][i + y] = "1";
                 stateCopy.gameBoard[j][i] = "0";
+                break;
             }
           }
 
-          const resetGame = () => {
+          /* const resetGame = () => {
             let stateCopy = Object.assign({}, this.state);
-            stateCopy.hero.health = 100;
-            stateCopy.hero.weapon = "Hands";
-            stateCopy.hero.weaponDamage = 1;
-            stateCopy.hero.enemyHealth = 100;
-            stateCopy.hero.enemyLevel = 1;
-            stateCopy.hero.level = 1;
-            stateCopy.hero.score = 0;
-            stateCopy.hero.dungeon = 1;
             stateCopy.hero.nextDungeon = false;
             stateCopy.hero.placeItems = false;
+            stateCopy.hero.enemyHealth = 100;
+            stateCopy.hero.weapon = "Hands";
+            stateCopy.hero.weaponDamage = 1;
+            stateCopy.hero.enemyLevel = 1;
+            stateCopy.hero.health = 100;
+            stateCopy.hero.dungeon = 1;
+            stateCopy.hero.level = 1;
+            stateCopy.hero.score = 0;
             this.setState(stateCopy);
-          }
+          } */
 
           const nextLevel = () => {
             switch (this.state.hero.dungeon) {
@@ -183,8 +184,11 @@ class App extends Component {
             //hero
             case "1":
               heroMoveValidation();
-              stateCopy.hero.positionX = j;
-              stateCopy.hero.positionY = i;
+              /* var wrapper = document.getElementById('container');
+              wrapper.scrollTop = (j * 11) - 20;
+              wrapper.scrollLeft = (i * 20) - 40;
+              console.log(j);
+              console.log(i); */
               break;
             default:
               stateCopy.gameBoard[j][i] = "0";
@@ -283,24 +287,24 @@ class App extends Component {
     // changes map to next dungeon
     if (this.state.hero.dungeon === 1 && this.state.hero.nextDungeon === true) {
       let stateCopy = Object.assign({}, this.state);
-      stateCopy.hero.dungeon = 2;
       stateCopy.hero.nextDungeon = false;
-      stateCopy.gameBoard = dungeon2;
       stateCopy.hero.placeItems = true;
+      stateCopy.hero.dungeon = 2;
+      stateCopy.gameBoard = dungeon2;
       this.setState(stateCopy);
     } else if (this.state.hero.dungeon === 2 && this.state.hero.nextDungeon === true) {
       let stateCopy = Object.assign({}, this.state);
-      stateCopy.hero.dungeon = 3;
       stateCopy.hero.nextDungeon = false;
-      stateCopy.gameBoard = dungeon3;
       stateCopy.hero.placeItems = true;
+      stateCopy.hero.dungeon = 3;
+      stateCopy.gameBoard = dungeon3;
       this.setState(stateCopy);
     } else if (this.state.hero.dungeon === 3 && this.state.hero.nextDungeon === true) {
       let stateCopy = Object.assign({}, this.state);
-      stateCopy.hero.dungeon = 4;
       stateCopy.hero.nextDungeon = false;
-      stateCopy.gameBoard = dungeon4;
       stateCopy.hero.placeItems = true;
+      stateCopy.hero.dungeon = 4;
+      stateCopy.gameBoard = dungeon4;
       this.setState(stateCopy);
     }
   }
@@ -327,9 +331,7 @@ class App extends Component {
                   selectBox={this.selectBox}
                   gameBoard={this.state.gameBoard}
                   rows={this.rows}
-                  cols={this.cols}
-                  positionX={this.state.hero.positionX}
-                  positionY={this.state.hero.positionY} />
+                  cols={this.cols} />
               </div>
             </div>
           </div>
@@ -355,7 +357,7 @@ class App extends Component {
     gridCopy[row][col] === "9"
       ? gridCopy[row][col] = "0"
       : gridCopy[row][col] = "9";
-    // uncomment this part to activate
+    // uncomment this part to activate:
     /* this.setState({ gameBoard: gridCopy })
     console.log(gridCopy); */
   }
