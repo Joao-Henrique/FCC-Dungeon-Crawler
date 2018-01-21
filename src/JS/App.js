@@ -62,7 +62,7 @@ class App extends Component {
     this.ifNewMapPlaceItems();
 
     const updateGameBoard = (y, x) => {
-      let stateCopy = this.state;
+      let stateCopy = Object.assign({}, this.state);
       for (let i = 0; i < this.cols; i++) {
         for (let j = 0; j < this.rows; j++) {
 
@@ -118,6 +118,7 @@ class App extends Component {
               default:
                 stateCopy.gameBoard[j + x][i + y] = "1";
                 stateCopy.gameBoard[j][i] = "0";
+                console.log(this.state.gameBoard);
                 break;
             }
           }
