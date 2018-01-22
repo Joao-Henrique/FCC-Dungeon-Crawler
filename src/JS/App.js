@@ -58,172 +58,160 @@ class App extends Component {
   ///////////////////////////////////////////////////////////
   handleKeyPress = (e) => {
     e.preventDefault();
-
     this.ifNewMapPlaceItems();
-
-    const updateGameBoard = (y, x) => {
-      let stateCopy = Object.assign({}, this.state);
-      for (let i = 0; i < this.cols; i++) {
-        for (let j = 0; j < this.rows; j++) {
-
-
-          const heroMoveValidation = () => {
-            switch (this.state.gameBoard[j + x][i + y]) {
-              //wall
-              case "9":
-                stateCopy.gameBoard[j][i] = "1";
-                break;
-              //enemy
-              case "2":
-                if (stateCopy.hero.health < 0) {
-                  alert("GAME OVER!!! You are a dead box ;)")
-                } else if (stateCopy.hero.enemyHealth > 0) {
-                  stateCopy.gameBoard[j][i] = "1";
-                  stateCopy.hero.enemyHealth = stateCopy.hero.enemyHealth - (this.generateRandomNumber(30, 20) * (stateCopy.hero.weaponDamage + stateCopy.hero.level - 1));
-                  stateCopy.hero.health = stateCopy.hero.health - (this.generateRandomNumber(30, 20) * (stateCopy.hero.dungeon + stateCopy.hero.enemyLevel));
-                } else {
-                  stateCopy.gameBoard[j + x][i + y] = "0";
-                  stateCopy.hero.toNextLevel -= 100;
-                  stateCopy.hero.enemyHealth = 100;
-                  stateCopy.hero.score += 100;
-                }
-                break;
-              //weapon
-              case "5":
-                stateCopy.gameBoard[j + x][i + y] = "0";
-                stateCopy.gameBoard[j][i] = "1";
-                stateCopy.hero.weapon = stateCopy.hero.weaponChoice[stateCopy.hero.dungeon - 1];
-                alert("You just found a " + stateCopy.hero.weaponChoice[stateCopy.hero.dungeon - 1] + " to fight with!");
-                stateCopy.hero.weaponDamage++;
-                break;
-              //score
-              case "6":
-                stateCopy.gameBoard[j + x][i + y] = "0";
-                stateCopy.gameBoard[j][i] = "1";
-                stateCopy.hero.toNextLevel -= 100;
-                stateCopy.hero.score += 100;
-                break;
-              //health
-              case "7":
-                stateCopy.hero.health = stateCopy.hero.health + 100;
-                stateCopy.gameBoard[j + x][i + y] = "0";
-                stateCopy.gameBoard[j][i] = "1";
-                break;
-              //portal
-              case "8":
-                stateCopy.gameBoard[j][i] = "8";
-                alert("You have cleared the dungeon nº " + stateCopy.hero.dungeon + " !!!");
-                nextLevel();
-                break;
-              default:
-                stateCopy.gameBoard[j + x][i + y] = "1";
-                stateCopy.gameBoard[j][i] = "0";
-                console.log(this.state.gameBoard);
-                break;
-            }
-          }
-
-          /* const resetGame = () => {
-            let stateCopy = Object.assign({}, this.state);
-            stateCopy.hero.nextDungeon = false;
-            stateCopy.hero.placeItems = false;
-            stateCopy.hero.enemyHealth = 100;
-            stateCopy.hero.weapon = "Hands";
-            stateCopy.hero.weaponDamage = 1;
-            stateCopy.hero.enemyLevel = 1;
-            stateCopy.hero.health = 100;
-            stateCopy.hero.dungeon = 1;
-            stateCopy.hero.level = 1;
-            stateCopy.hero.score = 0;
-            this.setState(stateCopy);
-          } */
-
-          const nextLevel = () => {
-            switch (this.state.hero.dungeon) {
-              case 0:
-                stateCopy.hero.nextDungeon = true;
-                break;
-              case 1:
-                stateCopy.hero.nextDungeon = true;
-                break;
-              case 2:
-                stateCopy.hero.nextDungeon = true;
-                break;
-              case 3:
-                stateCopy.hero.nextDungeon = true;
-                break;
-              default: alert("You have finished the game!!! Congrats!!!");
-            }
-          }
-
-          // copies gameboard and moves the hero
-          switch (this.state.gameBoard[j][i]) {
-            //wall
-            case "9":
-              stateCopy.gameBoard[j][i] = "9";
-              break;
-            //enemy
-            case "2":
-              stateCopy.gameBoard[j][i] = "2";
-              break;
-            //weapon
-            case "5":
-              stateCopy.gameBoard[j][i] = "5";
-              break;
-            //score
-            case "6":
-              stateCopy.gameBoard[j][i] = "6";
-              break;
-            //health
-            case "7":
-              stateCopy.gameBoard[j][i] = "7";
-              break;
-            //portal
-            case "8":
-              stateCopy.gameBoard[j][i] = "8";
-              break;
-            //hero
-            case "1":
-              heroMoveValidation();
-              /* var wrapper = document.getElementById('container');
-              wrapper.scrollTop = (j * 11) - 20;
-              wrapper.scrollLeft = (i * 20) - 40;
-              console.log(j);
-              console.log(i); */
-              break;
-            default:
-              stateCopy.gameBoard[j][i] = "0";
-          }
-        }
-      }
-      this.setState(stateCopy);
-    }
-
     // deals with user keypress
     switch (e.keyCode) {
       // up
       case 38:
-        updateGameBoard(0, -1);
+        this.updateGameBoard(0, -1);
         break;
       // right
       case 39:
-        updateGameBoard(1, 0);
+        this.updateGameBoard(1, 0);
         break;
       // down
       case 40:
-        updateGameBoard(0, 1);
+        this.updateGameBoard(0, 1);
         break;
       // left
       case 37:
-        updateGameBoard(-1, 0);
+        this.updateGameBoard(-1, 0);
         break;
       default:
         return;
     }
   }
 
+  updateGameBoard = (y, x) => {
+    let stateCopy = Object.assign({}, this.state);
 
+    for (let i = 0; i < this.cols; i++) {
+      for (let j = 0; j < this.rows; j++) {
 
+        // copies gameboard and moves the hero
+        switch (this.state.gameBoard[j][i]) {
+          case "9"://wall
+            stateCopy.gameBoard[j][i] = "9";
+            break;
+          case "2"://enemy
+            stateCopy.gameBoard[j][i] = "2";
+            break;
+          case "5"://weapon
+            stateCopy.gameBoard[j][i] = "5";
+            break;
+          case "6"://score
+            stateCopy.gameBoard[j][i] = "6";
+            break;
+          case "7"://health
+            stateCopy.gameBoard[j][i] = "7";
+            break;
+          case "8"://portal
+            stateCopy.gameBoard[j][i] = "8";
+            break;
+          case "1"://hero
+            this.heroMoveValidation(stateCopy, i, j, x, y);
+            /* var wrapper = document.getElementById('container');
+            wrapper.scrollTop = (j * 11) - 20;
+            wrapper.scrollLeft = (i * 20) - 40;
+            console.log(j);
+            console.log(i); */
+            break;
+          default:
+            stateCopy.gameBoard[j][i] = "0";
+        }
+      }
+    }
+    this.setState({ stateCopy });
+  }
+
+  heroMoveValidation = (stateCopy, i, j, x, y) => {
+    switch (stateCopy.gameBoard[j + x][i + y]) {
+      //wall
+      case "9":
+        stateCopy.gameBoard[j][i] = "1";
+        break;
+      //enemy
+      case "2":
+        if (stateCopy.hero.health < 0) {
+          alert("GAME OVER!!! You are a dead box ;)")
+        } else if (stateCopy.hero.enemyHealth > 0) {
+          stateCopy.gameBoard[j][i] = "1";
+          stateCopy.hero.enemyHealth = stateCopy.hero.enemyHealth - (this.generateRandomNumber(30, 20) * (stateCopy.hero.weaponDamage + stateCopy.hero.level - 1));
+          stateCopy.hero.health = stateCopy.hero.health - (this.generateRandomNumber(30, 20) * (stateCopy.hero.dungeon + stateCopy.hero.enemyLevel));
+        } else {
+          stateCopy.gameBoard[j + x][i + y] = "0";
+          stateCopy.hero.toNextLevel -= 100;
+          stateCopy.hero.enemyHealth = 100;
+          stateCopy.hero.score += 100;
+        }
+        break;
+      //weapon
+      case "5":
+        stateCopy.gameBoard[j + x][i + y] = "0";
+        stateCopy.gameBoard[j][i] = "1";
+        stateCopy.hero.weapon = stateCopy.hero.weaponChoice[stateCopy.hero.dungeon - 1];
+        alert("You just found a " + stateCopy.hero.weaponChoice[stateCopy.hero.dungeon - 1] + " to fight with!");
+        stateCopy.hero.weaponDamage++;
+        break;
+      //score
+      case "6":
+        stateCopy.gameBoard[j + x][i + y] = "0";
+        stateCopy.gameBoard[j][i] = "1";
+        stateCopy.hero.toNextLevel -= 100;
+        stateCopy.hero.score += 100;
+        break;
+      //health
+      case "7":
+        stateCopy.hero.health = stateCopy.hero.health + 100;
+        stateCopy.gameBoard[j + x][i + y] = "0";
+        stateCopy.gameBoard[j][i] = "1";
+        break;
+      //portal
+      case "8":
+        stateCopy.gameBoard[j][i] = "8";
+        alert("You have cleared the dungeon nº " + stateCopy.hero.dungeon + " !!!");
+        /* nextLevel(); */
+        break;
+      default:
+        stateCopy.gameBoard[j + x][i + y] = "1";
+        stateCopy.gameBoard[j][i] = "0";
+        console.log(this.state.gameBoard);
+        break;
+    }
+  }
+
+  nextLevel = (stateCopy) => {
+    switch (this.state.hero.dungeon) {
+      case 0:
+        stateCopy.hero.nextDungeon = true;
+        break;
+      case 1:
+        stateCopy.hero.nextDungeon = true;
+        break;
+      case 2:
+        stateCopy.hero.nextDungeon = true;
+        break;
+      case 3:
+        stateCopy.hero.nextDungeon = true;
+        break;
+      default: alert("You have finished the game!!! Congrats!!!");
+    }
+  }
+
+  /* resetGame = () => {
+    let stateCopy = Object.assign({}, this.state);
+    stateCopy.hero.nextDungeon = false;
+    stateCopy.hero.placeItems = false;
+    stateCopy.hero.enemyHealth = 100;
+    stateCopy.hero.weapon = "Hands";
+    stateCopy.hero.weaponDamage = 1;
+    stateCopy.hero.enemyLevel = 1;
+    stateCopy.hero.health = 100;
+    stateCopy.hero.dungeon = 1;
+    stateCopy.hero.level = 1;
+    stateCopy.hero.score = 0;
+    this.setState(stateCopy);
+  } */
 
   ///////////////////////////////////////////////////////////
   /* ALL ITEMS AND ENEMIES ARE RANDOMLY PLACED ON THE MAP */
