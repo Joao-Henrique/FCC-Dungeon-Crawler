@@ -6,7 +6,7 @@ class Grid extends Component {
   render() {
 
     // DRAW THE GRID
-    const width = this.props.cols * 20;
+    const width = this.props.cols * 40;
     let rowsArr = [];
     let boxClass = "";
     for (let i = 0; i < this.props.rows; i++) {

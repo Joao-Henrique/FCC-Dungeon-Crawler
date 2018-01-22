@@ -4,8 +4,6 @@
 ///////////////////////////////////////////////////////////
 /*
 
-1 - UserStory - Much of the map is hidden. When I take a step, all spaces that are within a certain number of spaces from me are revealed.
-
 2 - UserStory - When I find and beat the boss, I win.
 
 3 - Bug - When you change level the items should atomaticly be placed on the board but, this only happens when you move the hero for the first time.
@@ -24,7 +22,8 @@ import dungeon2 from '../Maps/dungeon2';
 import dungeon3 from '../Maps/dungeon3';
 import dungeon4 from '../Maps/dungeon4';
 import logo from '../IMG/logo.svg';
-import Menu from './Menu';
+import BottomMenu from './BottomMenu';
+import TopMenu from './TopMenu';
 import Grid from './Grid';
 
 class App extends Component {
@@ -110,11 +109,7 @@ class App extends Component {
             break;
           case "1"://hero
             this.heroMoveValidation(stateCopy, i, j, x, y);
-            /* var wrapper = document.getElementById('container');
-            wrapper.scrollTop = (j * 11) - 20;
-            wrapper.scrollLeft = (i * 20) - 40;
-            console.log(j);
-            console.log(i); */
+            this.updateViewArea(j, i);
             break;
           default:
             stateCopy.gameBoard[j][i] = "0";
@@ -169,49 +164,43 @@ class App extends Component {
       //portal
       case "8":
         stateCopy.gameBoard[j][i] = "8";
-        alert("You have cleared the dungeon nº " + stateCopy.hero.dungeon + " !!!");
-        /* nextLevel(); */
+        this.nextLevel();
         break;
       default:
         stateCopy.gameBoard[j + x][i + y] = "1";
         stateCopy.gameBoard[j][i] = "0";
-        console.log(this.state.gameBoard);
         break;
     }
   }
 
-  nextLevel = (stateCopy) => {
-    switch (this.state.hero.dungeon) {
-      case 0:
-        stateCopy.hero.nextDungeon = true;
-        break;
-      case 1:
-        stateCopy.hero.nextDungeon = true;
-        break;
-      case 2:
-        stateCopy.hero.nextDungeon = true;
-        break;
-      case 3:
-        stateCopy.hero.nextDungeon = true;
-        break;
-      default: alert("You have finished the game!!! Congrats!!!");
-    }
+  nextLevel = () => {
+    if (this.state.hero.dungeon === 1) {
+      alert("You have cleared the dungeon nº " + this.state.hero.dungeon + " !!!");
+      this.setState({ gameBoard: dungeon2 });
+      this.setState({ hero: { dungeon: 2 } });
+    } else { alert("other level") };
   }
 
-  /* resetGame = () => {
-    let stateCopy = Object.assign({}, this.state);
-    stateCopy.hero.nextDungeon = false;
-    stateCopy.hero.placeItems = false;
-    stateCopy.hero.enemyHealth = 100;
-    stateCopy.hero.weapon = "Hands";
-    stateCopy.hero.weaponDamage = 1;
-    stateCopy.hero.enemyLevel = 1;
-    stateCopy.hero.health = 100;
-    stateCopy.hero.dungeon = 1;
-    stateCopy.hero.level = 1;
-    stateCopy.hero.score = 0;
-    this.setState(stateCopy);
-  } */
+  resetGame = () => {
+    let stateCopy = Object.assign({}, this.state.hero);
+    stateCopy.nextDungeon = false;
+    stateCopy.placeItems = false;
+    stateCopy.enemyHealth = 100;
+    stateCopy.weapon = "Hands";
+    stateCopy.weaponDamage = 1;
+    stateCopy.enemyLevel = 1;
+    stateCopy.health = 100;
+    stateCopy.dungeon = 1;
+    stateCopy.level = 1;
+    stateCopy.score = 0;
+    this.setState({ hero: stateCopy });
+  }
+
+  updateViewArea = (j, i) => {
+    var wrapper = document.getElementById('container');
+    wrapper.scrollTop = (j * 40) - 200;
+    wrapper.scrollLeft = (i * 40) - 200;
+  }
 
   ///////////////////////////////////////////////////////////
   /* ALL ITEMS AND ENEMIES ARE RANDOMLY PLACED ON THE MAP */
@@ -244,13 +233,12 @@ class App extends Component {
     this.randomlyPlaceItem("7", 8);
   }
 
-
   ifNewMapPlaceItems = () => {
     if (this.state.hero.placeItems === true) {
-      let stateCopy = Object.assign({}, this.state);
+      let stateCopy = Object.assign({}, this.state.hero);
       this.randomlyPlaceAllItems();
       stateCopy.hero.placeItems = false;
-      this.setState(stateCopy);
+      this.setState({ hero: stateCopy });
     }
   }
 
@@ -267,38 +255,36 @@ class App extends Component {
   componentWillUpdate() {
     // changes hero level every 2500xp
     if (this.state.hero.toNextLevel <= 0) {
-      let stateCopy = Object.assign({}, this.state);
-      stateCopy.hero.toNextLevel = 2500;
-      stateCopy.hero.level += 1;
-      this.setState(stateCopy);
+      let stateCopy = Object.assign({}, this.state.hero);
+      stateCopy.toNextLevel = 2500;
+      stateCopy.level += 1;
+      this.setState({ hero: stateCopy });
       alert("You are getting stronger! Your skills have reach level " + stateCopy.hero.level + " !!!");
     }
-    // changes map to next dungeon
+    /* // changes map to next dungeon
     if (this.state.hero.dungeon === 1 && this.state.hero.nextDungeon === true) {
-      let stateCopy = Object.assign({}, this.state);
+      let stateCopy = Object.assign({}, this.state.gameBoard);
       stateCopy.hero.nextDungeon = false;
       stateCopy.hero.placeItems = true;
       stateCopy.hero.dungeon = 2;
       stateCopy.gameBoard = dungeon2;
-      this.setState(stateCopy);
+      this.setState({ gameboard: stateCopy });
     } else if (this.state.hero.dungeon === 2 && this.state.hero.nextDungeon === true) {
       let stateCopy = Object.assign({}, this.state);
       stateCopy.hero.nextDungeon = false;
       stateCopy.hero.placeItems = true;
       stateCopy.hero.dungeon = 3;
       stateCopy.gameBoard = dungeon3;
-      this.setState(stateCopy);
+      this.setState({ gameboard: stateCopy });
     } else if (this.state.hero.dungeon === 3 && this.state.hero.nextDungeon === true) {
       let stateCopy = Object.assign({}, this.state);
       stateCopy.hero.nextDungeon = false;
       stateCopy.hero.placeItems = true;
       stateCopy.hero.dungeon = 4;
       stateCopy.gameBoard = dungeon4;
-      this.setState(stateCopy);
-    }
+      this.setState({ gameboard: stateCopy });
+    } */
   }
-
-
 
   ///////////////////////////////////////////////////////////
   /* RENDER METHOD */
@@ -314,13 +300,16 @@ class App extends Component {
         <div className="row">
           <div className="col-md-6 projectSection">
             <div className="wraper">
-              <Menu heroStats={this.state.hero} />
-              <div id="container">
-                <Grid
-                  selectBox={this.selectBox}
-                  gameBoard={this.state.gameBoard}
-                  rows={this.rows}
-                  cols={this.cols} />
+              <div className="gameContainer">
+                <TopMenu heroStats={this.state.hero} />
+                <div id="container">
+                  <Grid
+                    selectBox={this.selectBox}
+                    gameBoard={this.state.gameBoard}
+                    rows={this.rows}
+                    cols={this.cols} />
+                </div>
+                <BottomMenu heroStats={this.state.hero} />
               </div>
             </div>
           </div>

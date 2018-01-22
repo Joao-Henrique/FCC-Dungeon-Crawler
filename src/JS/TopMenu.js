@@ -1,6 +1,6 @@
 import React from 'react';
 
-class Menu extends React.Component {
+class TopMenu extends React.Component {
 
   render() {
     return (
@@ -15,19 +15,9 @@ class Menu extends React.Component {
         <h4>Enemy:</h4>
         <p>{this.props.heroStats.enemyHealth}</p>
 
-        <h4>Score:</h4>
-        <p>{this.props.heroStats.score}
-          XP</p>
-
-        <h4>Level:</h4>
-        <p>{this.props.heroStats.level}</p>
-
-        <h4>Dungeon:</h4>
-        <p>{this.props.heroStats.dungeon}</p>
-
       </div>
     );
   }
 }
 
-export default Menu;
+export default TopMenu;

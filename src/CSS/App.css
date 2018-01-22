@@ -31,10 +31,9 @@
 
 .wraper {
   background-color: white;
-  border-style: solid;
-  border-radius: 10px;
   max-width: 650px;
   margin: auto;
+  text-align: center;
 }
 
 .panel-default>.panel-heading {
