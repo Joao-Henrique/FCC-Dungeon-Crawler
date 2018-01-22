@@ -198,7 +198,7 @@ class App extends Component {
 
   updateViewArea = (j, i) => {
     var wrapper = document.getElementById('container');
-    wrapper.scrollTop = (j * 40) - 200;
+    wrapper.scrollTop = (j * 40) - 160;
     wrapper.scrollLeft = (i * 40) - 200;
   }
 
