@@ -3,6 +3,7 @@
 /* TODO LIST */
 ///////////////////////////////////////////////////////////
 /*
+1 - Bug - When you start a new level the game stops to update items count.
 
 2 - UserStory - When I find and beat the boss, I win.
 
@@ -57,7 +58,6 @@ class App extends Component {
   ///////////////////////////////////////////////////////////
   handleKeyPress = (e) => {
     e.preventDefault();
-    this.ifNewMapPlaceItems();
     // deals with user keypress
     switch (e.keyCode) {
       // up
@@ -165,6 +165,7 @@ class App extends Component {
       case "8":
         stateCopy.gameBoard[j][i] = "8";
         this.nextLevel();
+        this.randomlyPlaceAllItems();
         break;
       default:
         stateCopy.gameBoard[j + x][i + y] = "1";
@@ -174,11 +175,26 @@ class App extends Component {
   }
 
   nextLevel = () => {
-    if (this.state.hero.dungeon === 1) {
-      alert("You have cleared the dungeon nº " + this.state.hero.dungeon + " !!!");
-      this.setState({ gameBoard: dungeon2 });
-      this.setState({ hero: { dungeon: 2 } });
-    } else { alert("other level") };
+    switch (this.state.hero.dungeon) {
+      case 1:
+        alert("You have cleared the dungeon nº " + this.state.hero.dungeon + " !!!");
+        this.setState({ gameBoard: dungeon2 });
+        this.setState({ hero: { ...this.state.hero, dungeon: 2 } });
+        break;
+      case 2:
+        alert("You have cleared the dungeon nº " + this.state.hero.dungeon + " !!!");
+        this.setState({ gameBoard: dungeon3 });
+        this.setState({ hero: { ...this.state.hero, dungeon: 3 } });
+        break;
+      case 3:
+        alert("You have cleared the dungeon nº " + this.state.hero.dungeon + " !!!");
+        this.setState({ gameBoard: dungeon4 });
+        this.setState({ hero: { ...this.state.hero, dungeon: 4 } });
+        break;
+      default:
+        alert("You have cleared the dungeon nº " + this.state.hero.dungeon + " !!!");
+        alert("Congratilations!!! You have finished the game");
+    };
   }
 
   resetGame = () => {
@@ -210,19 +226,20 @@ class App extends Component {
   }
 
   randomlyPlaceItem = (item, numberOfItems) => {
-    let stateCopy = Object.assign({}, this.state);
+    let stateCopy = Object.assign({}, this.state.gameBoard);
     for (let i = numberOfItems; i > 0;) {
       let row = this.generateRandomNumber(this.rows, 1);
       let col = this.generateRandomNumber(this.cols, 1);
-      if (stateCopy.gameBoard[row][col] === "0") {
-        stateCopy.gameBoard[row][col] = item;
+      if (stateCopy[row][col] === "0") {
+        stateCopy[row][col] = item;
         i--;
       }
     }
-    this.setState(stateCopy)
+    this.setState({ gameBoard: stateCopy })
   }
 
   randomlyPlaceAllItems = () => {
+    this.updateViewArea(20, 0);
     //enemy
     this.randomlyPlaceItem("2", 10);
     //weapon
@@ -233,15 +250,6 @@ class App extends Component {
     this.randomlyPlaceItem("7", 8);
   }
 
-  ifNewMapPlaceItems = () => {
-    if (this.state.hero.placeItems === true) {
-      let stateCopy = Object.assign({}, this.state.hero);
-      this.randomlyPlaceAllItems();
-      stateCopy.hero.placeItems = false;
-      this.setState({ hero: stateCopy });
-    }
-  }
-
 
 
   ///////////////////////////////////////////////////////////
@@ -249,17 +257,18 @@ class App extends Component {
   ///////////////////////////////////////////////////////////
   componentDidMount() {
     window.addEventListener('keydown', this.handleKeyPress);
+    this.updateViewArea(20, 0);
     this.randomlyPlaceAllItems();
   }
 
-  componentWillUpdate() {
+  componentDidUpdate() {
     // changes hero level every 2500xp
     if (this.state.hero.toNextLevel <= 0) {
       let stateCopy = Object.assign({}, this.state.hero);
       stateCopy.toNextLevel = 2500;
       stateCopy.level += 1;
-      this.setState({ hero: stateCopy });
-      alert("You are getting stronger! Your skills have reach level " + stateCopy.hero.level + " !!!");
+      this.setState({ ...this.state.hero, hero: stateCopy });
+      alert("You are getting stronger! Your skills have reach level " + stateCopy.level + " !!!");
     }
     /* // changes map to next dungeon
     if (this.state.hero.dungeon === 1 && this.state.hero.nextDungeon === true) {
