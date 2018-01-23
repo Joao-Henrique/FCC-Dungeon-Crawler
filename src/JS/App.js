@@ -13,6 +13,8 @@
 
 5 - Bug - When hero dies, the map is not reseting properly. Parts of the map do not update as they should.
 
+6 - Bug - When map changes should update view area. Not working.
+
 */
 
 import React, { Component } from 'react';
@@ -41,6 +43,7 @@ class App extends Component {
         weapon: "Hands",
         weaponDamage: 1,
         enemyHealth: 100,
+        bossHealth: 2500,
         enemyLevel: 1,
         level: 1,
         toNextLevel: 2500,
@@ -95,6 +98,9 @@ class App extends Component {
           case "2"://enemy
             stateCopy.gameBoard[j][i] = "2";
             break;
+          case "3"://boss
+            stateCopy.gameBoard[j][i] = "3";
+            break;
           case "5"://weapon
             stateCopy.gameBoard[j][i] = "5";
             break;
@@ -138,6 +144,20 @@ class App extends Component {
           stateCopy.hero.toNextLevel -= 100;
           stateCopy.hero.enemyHealth = 100;
           stateCopy.hero.score += 100;
+        }
+        break;
+      //boss
+      case "3":
+        if (stateCopy.hero.health < 0) {
+          alert("GAME OVER!!! You are a dead box ;)")
+        } else if (stateCopy.hero.bossHealth > 0) {
+          stateCopy.gameBoard[j][i] = "1";
+          stateCopy.hero.bossHealth = stateCopy.hero.bossHealth - (this.generateRandomNumber(30, 20) * (stateCopy.hero.weaponDamage + stateCopy.hero.level - 1));
+          stateCopy.hero.health = stateCopy.hero.health - (this.generateRandomNumber(30, 20) * (stateCopy.hero.dungeon + stateCopy.hero.enemyLevel));
+        } else {
+          stateCopy.gameBoard[j + x][i + y] = "0";
+          stateCopy.hero.score += 5000;
+          alert("CONGRATULATIONS!!! You have FINISHED THE GAME!!! Your total score is " + this.state.hero.score)
         }
         break;
       //weapon
@@ -239,7 +259,6 @@ class App extends Component {
   }
 
   randomlyPlaceAllItems = () => {
-    this.updateViewArea(20, 0);
     //enemy
     this.randomlyPlaceItem("2", 10);
     //weapon

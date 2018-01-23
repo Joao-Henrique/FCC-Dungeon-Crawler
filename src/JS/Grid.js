@@ -22,11 +22,15 @@ class Grid extends Component {
           case "2":
             (boxClass = "box enemy");
             break;
+          case "3":
+            (boxClass = "box boss");
+            break;
           case "5":
             (boxClass = "box weapon");
             break;
           case "6":
             (boxClass = "box xp");
+            { <p>xp</p> };
             break;
           case "7":
             (boxClass = "box health");
