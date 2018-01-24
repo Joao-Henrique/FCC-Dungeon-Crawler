@@ -36,27 +36,27 @@ p {
 }
 .boss {
   background-color: red;
-  border-radius:4px;
+  border-radius:6px;
   border-width: 14px;
 }
 .enemy {
   background-color: red;
   border-radius:4px;
   border-width: 8px;
+  border-style: dashed
 }
 .weapon {
-  background-color: blue;
-  border-left-style: dashed;
-  border-right-style: dashed;
-  border-left-width: 12px;
-  border-right-width: 12px;
-  border-color: yellow;
+  background-color: black;
+  border-style: dotted;
+  border-width: 10px;
+  border-color: greenyellow;
 }
 .xp {
   background-color: yellow;
   border-radius: 20px;
-  border-width: 6px;
-  border-color: rgb(255, 208, 0)
+  border-width: 4px;
+  border-color: rgb(255, 115, 0);
+  border-style: dotted;
 }
 .health {
   background-color: green;
