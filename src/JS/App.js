@@ -14,6 +14,7 @@
 
 import React, { Component } from 'react';
 import ProjectDescription from './ProjectDescription';
+import clearMap from '../Maps/clearMap';
 import dungeon1 from '../Maps/dungeon1';
 import dungeon2 from '../Maps/dungeon2';
 import dungeon3 from '../Maps/dungeon3';
@@ -31,6 +32,8 @@ class App extends Component {
     this.state = {
       gameBoard: dungeon1,
       hero: {
+        heroPositionX: 16,
+        heroPositionY: 4,
         health: 100,
         weapon: "Hands",
         weaponDamage: 1,
@@ -54,83 +57,70 @@ class App extends Component {
     switch (e.keyCode) {
       // up
       case 38:
-        this.updateGameBoard(0, -1);
+        this.heroMoveValidation(0, -1);
         break;
       // right
       case 39:
-        this.updateGameBoard(1, 0);
+        this.heroMoveValidation(1, 0);
         break;
       // down
       case 40:
-        this.updateGameBoard(0, 1);
+        this.heroMoveValidation(0, 1);
         break;
       // left
       case 37:
-        this.updateGameBoard(-1, 0);
+        this.heroMoveValidation(-1, 0);
         break;
       default:
         return;
     }
   }
 
-  updateGameBoard = (y, x) => {
-    let stateCopy = Object.assign({}, this.state);
-    for (let i = 0; i < this.cols; i++) {
-      for (let j = 0; j < this.rows; j++) {
-        switch (this.state.gameBoard[j][i]) {
-          case "9"://wall
-            stateCopy.gameBoard[j][i] = "9";
-            break;
-          case "2"://enemy
-            stateCopy.gameBoard[j][i] = "2";
-            break;
-          case "3"://boss
-            stateCopy.gameBoard[j][i] = "3";
-            break;
-          case "5"://weapon
-            stateCopy.gameBoard[j][i] = "5";
-            break;
-          case "6"://score
-            stateCopy.gameBoard[j][i] = "6";
-            break;
-          case "7"://health
-            stateCopy.gameBoard[j][i] = "7";
-            break;
-          case "8"://portal
-            stateCopy.gameBoard[j][i] = "8";
-            break;
-          case "1"://hero
-            this.heroMoveValidation(stateCopy, i, j, x, y);
-            this.heroViewArea(j, i);
-            break;
-          default:
-            stateCopy.gameBoard[j][i] = "0";
-        }
-      }
-    }
-    this.setState({ stateCopy });
+  heroCurrentPosition = (x, y) => {
+    let stateCopy = Object.assign({}, this.state.gameBoard);
+    stateCopy[this.state.hero.heroPositionX][this.state.hero.heroPositionY] = "1";
+    this.setState({ stateCopy })
   }
 
-  heroMoveValidation = (stateCopy, i, j, x, y) => {
-    switch (stateCopy.gameBoard[j + x][i + y]) {
+  heroClearPastPosition = () => {
+    let stateCopy = Object.assign({}, this.state.gameBoard);
+    stateCopy[this.state.hero.heroPositionX][this.state.hero.heroPositionY] = "0";
+    this.setState({ stateCopy })
+  }
+
+  heroMovesToNextPosition = (x, y) => {
+    this.setState({ hero: { ...this.state.hero, heroPositionX: x, heroPositionY: y } })
+    this.heroCurrentPosition(x, y);
+    this.heroViewArea(x, y);
+  }
+
+  heroFightEnemy = (x, y) => {
+    let stateCopy = Object.assign({}, this.state.hero);
+    if (stateCopy.enemyHealth > 0) {
+      let enemyHealth = stateCopy.enemyHealth - (this.generateRandomNumber(30, 10) * (stateCopy.weaponDamage + stateCopy.level - 1));
+      let health = stateCopy.health - (this.generateRandomNumber(30, 10) * (stateCopy.enemyLevel));
+      this.setState({ ...this.state, hero: { ...this.state.hero, enemyHealth: enemyHealth, health: health } })
+    } else {
+      this.heroClearPastPosition();
+      this.heroMovesToNextPosition(this.state.hero.heroPositionX + x, this.state.hero.heroPositionY + y);
+      let toNextLevel = stateCopy.toNextLevel - 100;
+      let enemyHealth = 100;
+      let score = stateCopy.score + 100;
+      this.setState({ ...this.state, hero: { ...this.state.hero, toNextLevel: toNextLevel, enemyHealth: enemyHealth, score: score } })
+    }
+
+  }
+
+  heroMoveValidation = (y, x) => {
+    switch (this.state.gameBoard[this.state.hero.heroPositionX + x][this.state.hero.heroPositionY + y]) {
       //wall
       case "9":
-        stateCopy.gameBoard[j][i] = "1";
         break;
       //enemy
       case "2":
-        if (stateCopy.hero.enemyHealth > 0) {
-          stateCopy.gameBoard[j][i] = "1";
-          stateCopy.hero.enemyHealth = stateCopy.hero.enemyHealth - (this.generateRandomNumber(30, 10) * (stateCopy.hero.weaponDamage + stateCopy.hero.level - 1));
-          stateCopy.hero.health = stateCopy.hero.health - (this.generateRandomNumber(30, 10) * (stateCopy.hero.enemyLevel));
-        } else {
-          stateCopy.gameBoard[j + x][i + y] = "0";
-          stateCopy.hero.toNextLevel -= 100;
-          stateCopy.hero.enemyHealth = 100;
-          stateCopy.hero.score += 100;
-        }
+        this.heroFightEnemy(x, y);
         break;
-      //boss
+      /* //boss
       case "3":
         if (stateCopy.hero.bossHealth > 0) {
           stateCopy.gameBoard[j][i] = "1";
@@ -168,10 +158,10 @@ class App extends Component {
         stateCopy.gameBoard[j][i] = "8";
         this.nextLevel();
         this.randomlyPlaceAllItems();
-        break;
+        break; */
       default:
-        stateCopy.gameBoard[j + x][i + y] = "1";
-        stateCopy.gameBoard[j][i] = "0";
+        this.heroClearPastPosition();
+        this.heroMovesToNextPosition(this.state.hero.heroPositionX + x, this.state.hero.heroPositionY + y);
         break;
     }
   }
@@ -199,10 +189,10 @@ class App extends Component {
     };
   }
 
-  heroViewArea = (j, i) => {
+  heroViewArea = (x, y) => {
     var wrapper = document.getElementById('container');
-    wrapper.scrollTop = (j * 40) - 160;
-    wrapper.scrollLeft = (i * 40) - 200;
+    wrapper.scrollTop = (x * 40) - 160;
+    wrapper.scrollLeft = (y * 40) - 200;
   }
 
   heroLevelUp = () => {
@@ -218,13 +208,20 @@ class App extends Component {
   heroGameOver = () => {
     if (this.state.hero.health < 0) {
       alert("GAME OVER!!! You are a dead box ;)")
-      this.resetGame();
+      this.clearGameBoard();
+      /* this.loadNewGameBoard();
+      this.heroViewArea(20, 0);
+      this.randomlyPlaceAllItems(); */
     }
   }
 
-  resetGame = () => {
+  clearGameBoard = () => {
     this.setState({
+      ...this.state,
+      gameBoard: clearMap,
       hero: {
+        heroPositionX: 16,
+        heroPositionY: 4,
         health: 100,
         weapon: "Hands",
         weaponDamage: 1,
@@ -238,9 +235,13 @@ class App extends Component {
         weaponChoice: ["Stick", "Nife", "Catana", "ChainSaw"]
       }
     })
-    this.setState({ gameBoard: dungeon1 })
-    this.heroViewArea(20, 0);
-    this.randomlyPlaceAllItems();
+  }
+
+  loadNewGameBoard = () => {
+    this.setState({
+      ...this.state,
+      gameBoard: dungeon1
+    })
   }
 
   generateRandomNumber = (max, min) => {
@@ -279,6 +280,7 @@ class App extends Component {
   ///////////////////////////////////////////////////////////
   componentDidMount() {
     window.addEventListener('keydown', this.handleKeyPress);
+    this.heroCurrentPosition();
     this.heroViewArea(20, 0);
     this.randomlyPlaceAllItems();
   }

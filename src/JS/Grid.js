@@ -30,7 +30,6 @@ class Grid extends Component {
             break;
           case "6":
             (boxClass = "box xp");
-            { <p>xp</p> };
             break;
           case "7":
             (boxClass = "box health");
