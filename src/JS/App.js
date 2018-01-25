@@ -1,20 +1,5 @@
-
-///////////////////////////////////////////////////////////
-/* TODO LIST */
-///////////////////////////////////////////////////////////
-/*
-
-4 - Bug - When hero moves to certain directions it goes all the way till the end. It should move one square at a time.
-
-5 - Bug - When hero dies, the map is not reseting properly. Hero stays in the dying spot.
-
-6 - Bug - When map changes should update view area. Not working.
-
-*/
-
 import React, { Component } from 'react';
 import ProjectDescription from './ProjectDescription';
-import clearMap from '../Maps/clearMap';
 import dungeon1 from '../Maps/dungeon1';
 import dungeon2 from '../Maps/dungeon2';
 import dungeon3 from '../Maps/dungeon3';
@@ -38,10 +23,10 @@ class App extends Component {
         weapon: "Hands",
         weaponDamage: 1,
         enemyHealth: 100,
-        bossHealth: 2500,
+        bossHealth: 2700,
         enemyLevel: 1,
         level: 1,
-        toNextLevel: 2500,
+        toNextLevel: 1500,
         score: 0,
         dungeon: 1,
         weaponChoice: ["Stick", "Nife", "Catana", "ChainSaw"]
@@ -49,8 +34,9 @@ class App extends Component {
     }
   }
 
-
-
+  ///////////////////////////////////////////////////////////
+  /* HERO MOVEMENT */
+  ///////////////////////////////////////////////////////////
 
   handleKeyPress = (e) => {
     e.preventDefault();
@@ -76,7 +62,44 @@ class App extends Component {
     }
   }
 
-  heroCurrentPosition = (x, y) => {
+  heroMoveValidation = (y, x) => {
+    switch (this.state.gameBoard[this.state.hero.heroPositionX + x][this.state.hero.heroPositionY + y]) {
+      //wall
+      case "9":
+        break;
+      //enemy
+      case "2":
+        this.heroFightEnemy(x, y);
+        break;
+      //boss
+      case "3":
+        this.heroFightBoss(x, y);
+        break;
+      //weapon
+      case "5":
+        this.heroGetsWeapon(x, y);
+        break;
+      //score
+      case "6":
+        this.heroGetsScore(x, y);
+        break;
+      //health
+      case "7":
+        this.heroGetsHealth(x, y);
+        break;
+      //portal
+      case "8":
+        this.nextLevel();
+        this.randomlyPlaceAllItems();
+        break;
+      default:
+        this.heroClearPastPosition();
+        this.heroMovesToNextPosition(this.state.hero.heroPositionX + x, this.state.hero.heroPositionY + y);
+        break;
+    }
+  }
+
+  heroCurrentPosition = () => {
     let stateCopy = Object.assign({}, this.state.gameBoard);
     stateCopy[this.state.hero.heroPositionX][this.state.hero.heroPositionY] = "1";
     this.setState({ stateCopy })
@@ -89,104 +112,15 @@ class App extends Component {
   }
 
   heroMovesToNextPosition = (x, y) => {
-    this.setState({ hero: { ...this.state.hero, heroPositionX: x, heroPositionY: y } })
+    this.setState({
+      hero: {
+        ...this.state.hero,
+        heroPositionX: x,
+        heroPositionY: y
+      }
+    })
     this.heroCurrentPosition(x, y);
     this.heroViewArea(x, y);
-  }
-
-  heroFightEnemy = (x, y) => {
-    let stateCopy = Object.assign({}, this.state.hero);
-    if (stateCopy.enemyHealth > 0) {
-      let enemyHealth = stateCopy.enemyHealth - (this.generateRandomNumber(30, 10) * (stateCopy.weaponDamage + stateCopy.level - 1));
-      let health = stateCopy.health - (this.generateRandomNumber(30, 10) * (stateCopy.enemyLevel));
-      this.setState({ ...this.state, hero: { ...this.state.hero, enemyHealth: enemyHealth, health: health } })
-    } else {
-      this.heroClearPastPosition();
-      this.heroMovesToNextPosition(this.state.hero.heroPositionX + x, this.state.hero.heroPositionY + y);
-      let toNextLevel = stateCopy.toNextLevel - 100;
-      let enemyHealth = 100;
-      let score = stateCopy.score + 100;
-      this.setState({ ...this.state, hero: { ...this.state.hero, toNextLevel: toNextLevel, enemyHealth: enemyHealth, score: score } })
-    }
-
-  }
-
-  heroMoveValidation = (y, x) => {
-    switch (this.state.gameBoard[this.state.hero.heroPositionX + x][this.state.hero.heroPositionY + y]) {
-      //wall
-      case "9":
-        break;
-      //enemy
-      case "2":
-        this.heroFightEnemy(x, y);
-        break;
-      /* //boss
-      case "3":
-        if (stateCopy.hero.bossHealth > 0) {
-          stateCopy.gameBoard[j][i] = "1";
-          stateCopy.hero.bossHealth = stateCopy.hero.bossHealth - (this.generateRandomNumber(30, 10) * (stateCopy.hero.weaponDamage + stateCopy.hero.level - 1));
-          stateCopy.hero.health = stateCopy.hero.health - (this.generateRandomNumber(30, 10));
-        } else {
-          stateCopy.gameBoard[j + x][i + y] = "0";
-          stateCopy.hero.score += 5000;
-          alert("CONGRATULATIONS!!! You have FINISHED THE GAME!!! Your total score is " + this.state.hero.score + "XP")
-        }
-        break;
-      //weapon
-      case "5":
-        stateCopy.gameBoard[j + x][i + y] = "0";
-        stateCopy.gameBoard[j][i] = "1";
-        stateCopy.hero.weapon = stateCopy.hero.weaponChoice[stateCopy.hero.dungeon - 1];
-        alert("You just found a " + stateCopy.hero.weaponChoice[stateCopy.hero.dungeon - 1] + " to fight with!");
-        stateCopy.hero.weaponDamage++;
-        break;
-      //score
-      case "6":
-        stateCopy.gameBoard[j + x][i + y] = "0";
-        stateCopy.gameBoard[j][i] = "1";
-        stateCopy.hero.toNextLevel -= 100;
-        stateCopy.hero.score += 100;
-        break;
-      //health
-      case "7":
-        stateCopy.hero.health = stateCopy.hero.health + 100;
-        stateCopy.gameBoard[j + x][i + y] = "0";
-        stateCopy.gameBoard[j][i] = "1";
-        break;
-      //portal
-      case "8":
-        stateCopy.gameBoard[j][i] = "8";
-        this.nextLevel();
-        this.randomlyPlaceAllItems();
-        break; */
-      default:
-        this.heroClearPastPosition();
-        this.heroMovesToNextPosition(this.state.hero.heroPositionX + x, this.state.hero.heroPositionY + y);
-        break;
-    }
-  }
-
-  nextLevel = () => {
-    switch (this.state.hero.dungeon) {
-      case 1:
-        alert("You have cleared the dungeon nº " + this.state.hero.dungeon + " !!!");
-        this.setState({ gameBoard: dungeon2 });
-        this.setState({ hero: { ...this.state.hero, dungeon: 2, enemyLevel: 2 } });
-        break;
-      case 2:
-        alert("You have cleared the dungeon nº " + this.state.hero.dungeon + " !!!");
-        this.setState({ gameBoard: dungeon3 });
-        this.setState({ hero: { ...this.state.hero, dungeon: 3, enemyLevel: 3 } });
-        break;
-      case 3:
-        alert("You have cleared the dungeon nº " + this.state.hero.dungeon + " !!!");
-        this.setState({ gameBoard: dungeon4 });
-        this.setState({ hero: { ...this.state.hero, dungeon: 4, enemyLevel: 4 } });
-        break;
-      default:
-        alert("You have cleared the dungeon nº " + this.state.hero.dungeon + " !!!");
-        alert("Congratilations!!! You have finished the game");
-    };
   }
 
   heroViewArea = (x, y) => {
@@ -195,31 +129,188 @@ class App extends Component {
     wrapper.scrollLeft = (y * 40) - 200;
   }
 
+  ///////////////////////////////////////////////////////////
+  /* HERO / ITEMS INTERACTION */
+  ///////////////////////////////////////////////////////////
+  heroFightEnemy = (x, y) => {
+    let stateCopy = Object.assign({}, this.state.hero);
+    if (stateCopy.enemyHealth > 0) {
+      let enemyHealth = stateCopy.enemyHealth - (this.generateRandomNumber(30, 10) * (stateCopy.weaponDamage + stateCopy.level - 1));
+      let health = stateCopy.health - (this.generateRandomNumber(30, 10) * (stateCopy.enemyLevel));
+      this.setState({
+        ...this.state,
+        hero: {
+          ...this.state.hero,
+          enemyHealth: enemyHealth,
+          health: health
+        }
+      })
+    } else {
+      this.heroClearPastPosition();
+      this.heroMovesToNextPosition(this.state.hero.heroPositionX + x, this.state.hero.heroPositionY + y);
+      let toNextLevel = stateCopy.toNextLevel - 100;
+      let enemyHealth = 100;
+      let score = stateCopy.score + 100;
+      this.setState({
+        ...this.state,
+        hero: {
+          ...this.state.hero,
+          toNextLevel: toNextLevel,
+          enemyHealth: enemyHealth,
+          score: score
+        }
+      })
+    }
+  }
+
+  heroFightBoss = (x, y) => {
+    let stateCopy = Object.assign({}, this.state.hero);
+    if (stateCopy.bossHealth > 0) {
+      let bossHealth = stateCopy.bossHealth - (this.generateRandomNumber(30, 10) * (stateCopy.weaponDamage + stateCopy.level - 1));
+      let health = stateCopy.health - (this.generateRandomNumber(30, 10));
+      this.setState({
+        ...this.state,
+        hero: {
+          ...this.state.hero,
+          bossHealth: bossHealth,
+          health: health
+        }
+      })
+    } else {
+      this.heroClearPastPosition();
+      this.heroMovesToNextPosition(this.state.hero.heroPositionX + x, this.state.hero.heroPositionY + y);
+      let score = stateCopy.score + 5000;
+      this.setState({
+        ...this.state,
+        hero: {
+          ...this.state.hero,
+          score: score
+        }
+      })
+      alert("CONGRATULATIONS!!! You have FINISHED THE GAME!!! Your total score is " + this.state.hero.score + "XP")
+    }
+  }
+
+  heroGetsWeapon = (x, y) => {
+    let stateCopy = Object.assign({}, this.state.hero);
+    this.heroClearPastPosition();
+    this.heroMovesToNextPosition(this.state.hero.heroPositionX + x, this.state.hero.heroPositionY + y);
+    let weapon = stateCopy.weaponChoice[stateCopy.dungeon - 1];
+    let weaponDamage = stateCopy.weaponDamage++;
+    alert("You just found a " + stateCopy.weaponChoice[stateCopy.dungeon - 1] + " to fight with!");
+    this.setState({
+      ...this.state,
+      hero: {
+        ...this.state.hero,
+        weapon: weapon,
+        weaponDamage: weaponDamage
+      }
+    })
+  }
+
+  heroGetsScore = (x, y) => {
+    let stateCopy = Object.assign({}, this.state.hero);
+    this.heroClearPastPosition();
+    this.heroMovesToNextPosition(this.state.hero.heroPositionX + x, this.state.hero.heroPositionY + y);
+    let toNextLevel = stateCopy.toNextLevel -= 100;
+    let score = stateCopy.score += 100;
+    this.setState({
+      ...this.state,
+      hero: {
+        ...this.state.hero,
+        toNextLevel: toNextLevel,
+        score: score
+      }
+    })
+  }
+
+  heroGetsHealth = (x, y) => {
+    let stateCopy = Object.assign({}, this.state.hero);
+    this.heroClearPastPosition();
+    this.heroMovesToNextPosition(this.state.hero.heroPositionX + x, this.state.hero.heroPositionY + y);
+    let health = stateCopy.health + 100;
+    this.setState({
+      ...this.state,
+      hero: {
+        ...this.state.hero,
+        health: health
+      }
+    })
+  }
+
+  ///////////////////////////////////////////////////////////
+  /* UTILITIES */
+  ///////////////////////////////////////////////////////////
+  nextLevel = () => {
+    switch (this.state.hero.dungeon) {
+      case 1:
+        alert("You have cleared the dungeon nº " + this.state.hero.dungeon + " !!!");
+        this.setState({ gameBoard: dungeon2 });
+        this.setState({
+          hero: {
+            ...this.state.hero,
+            dungeon: 2,
+            enemyLevel: 2,
+            heroPositionX: 16,
+            heroPositionY: 4
+          }
+        });
+        this.heroViewArea(20, 0);
+        break;
+      case 2:
+        alert("You have cleared the dungeon nº " + this.state.hero.dungeon + " !!!");
+        this.setState({ gameBoard: dungeon3 });
+        this.setState({
+          hero: {
+            ...this.state.hero,
+            dungeon: 3,
+            enemyLevel: 3,
+            heroPositionX: 16,
+            heroPositionY: 4
+          }
+        });
+        this.heroViewArea(20, 0);
+        break;
+      case 3:
+        alert("You have cleared the dungeon nº " + this.state.hero.dungeon + " !!!");
+        this.setState({ gameBoard: dungeon4 });
+        this.setState({
+          hero: {
+            ...this.state.hero,
+            dungeon: 4,
+            enemyLevel: 4,
+            heroPositionX: 16,
+            heroPositionY: 4
+          }
+        });
+        this.heroViewArea(20, 0);
+        break;
+      default:
+        alert("You have cleared the dungeon nº " + this.state.hero.dungeon + " !!!");
+        alert("Congratilations!!! You have finished the game");
+    };
+  }
+
   heroLevelUp = () => {
     if (this.state.hero.toNextLevel <= 0) {
       let stateCopy = Object.assign({}, this.state.hero);
       stateCopy.toNextLevel = 1500;
       stateCopy.level += 1;
-      this.setState({ ...this.state.hero, hero: stateCopy });
+      this.setState({
+        ...this.state.hero,
+        hero: stateCopy
+      });
       alert("You are getting stronger! Your skills have reach level " + stateCopy.level + " !!!");
     }
   }
 
   heroGameOver = () => {
-    if (this.state.hero.health < 0) {
-      alert("GAME OVER!!! You are a dead box ;)")
-      this.clearGameBoard();
-      /* this.loadNewGameBoard();
-      this.heroViewArea(20, 0);
-      this.randomlyPlaceAllItems(); */
-    }
-  }
-
-  clearGameBoard = () => {
+    alert("GAME OVER!!! You are a dead box ;)")
+    this.heroViewArea(20, 0);
+    this.setState({ gameBoard: dungeon1 });
     this.setState({
-      ...this.state,
-      gameBoard: clearMap,
       hero: {
+        ...this.state.hero,
         heroPositionX: 16,
         heroPositionY: 4,
         health: 100,
@@ -229,19 +320,11 @@ class App extends Component {
         bossHealth: 2500,
         enemyLevel: 1,
         level: 1,
-        toNextLevel: 2500,
+        toNextLevel: 1500,
         score: 0,
         dungeon: 1,
-        weaponChoice: ["Stick", "Nife", "Catana", "ChainSaw"]
       }
-    })
-  }
-
-  loadNewGameBoard = () => {
-    this.setState({
-      ...this.state,
-      gameBoard: dungeon1
-    })
+    });
   }
 
   generateRandomNumber = (max, min) => {
@@ -269,11 +352,8 @@ class App extends Component {
     //score
     this.randomlyPlaceItem("6", 20);
     //health
-    this.randomlyPlaceItem("7", 12);
+    this.randomlyPlaceItem("7", 11);
   }
-
-
-
 
   ///////////////////////////////////////////////////////////
   /* LIFECYCLE METHODS */
@@ -287,11 +367,11 @@ class App extends Component {
 
   componentDidUpdate() {
     this.heroLevelUp();
-    this.heroGameOver();
+    if (this.state.hero.health < 0) {
+      this.heroGameOver();
+      this.randomlyPlaceAllItems();
+    }
   }
-
-
-
 
   ///////////////////////////////////////////////////////////
   /* RENDER METHOD */
@@ -327,9 +407,6 @@ class App extends Component {
       </div>
     )
   }
-
-
-
 
   ///////////////////////////////////////////////////////////
   /* ACTIVATE - IF YOU NEED TO DRAW NEW MAPS */
