@@ -32,4 +32,4 @@
 
 + January 2018
 
-+ Check it out on the [project.page](https://joao-henrique.github.io/FCC-Roguelike-Dungeon-Crawler-Game/).
++ Check it out on the [project.page](https://joao-henrique.github.io/FCC-Dungeon-Crawler/).
