@@ -12,7 +12,7 @@
   background-color: #222;
   height: 150px;
   padding: 20px;
-  color: white;
+  color: lightslategray;
 }
 
 .App-title {
@@ -30,14 +30,9 @@
 }
 
 .wraper {
-  background-color: white;
   max-width: 650px;
   margin: auto;
   text-align: center;
-}
-
-.panel-default>.panel-heading {
-  background-color: white;
 }
 
 .panel {
@@ -74,10 +69,10 @@ h5 {
 .information {
   border-top-style: dashed;
   border-color: black;
-  background-color: white;
   border-width: 5px;
   margin-top: 2em;
   padding: 15%;
+  background-color: lightslategray;
 }
 
 @media (min-width: 768px) {
@@ -116,5 +111,6 @@ h5 {
     padding-left: 1em;
     padding-top: 1em;
     padding-bottom: 1em;
+    margin-bottom: 8vh;
   }
 }

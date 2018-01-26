@@ -8,6 +8,7 @@
   border-color: black;
   padding-left: 10px;
   padding-right:10px;
+  background-color: lightslategray;
 }
 p {
   margin: auto;
@@ -25,57 +26,136 @@ p {
 }
 .box {
   display: inline-block;
-  border: 0.1px solid black;
   width: 40px;
   height: 40px;
 }
-.hero {
+.hero1 {
   background-color: lightsalmon;
   border-radius: 13px;
-  border-width: 4px;
+  box-shadow: -3px -3px 10px .1px black;
+}
+.hero2 {
+  background-color: lightsalmon;
+  border-radius: 13px;
+  border-width: 2px;
+  border-style: solid;
+  box-shadow: -3px -3px 10px .1px black;
+}
+.hero3 {
+  background-color: lightsalmon;
+  border-radius: 13px;
+  border-width: 8px;
+  border-style: double;
+  box-shadow: -3px -3px 10px .1px black;
+}
+.hero4 {
+  background-color: lightsalmon;
+  border-radius: 13px;
+  border-width: 18px;
+  border-style: double;
+  box-shadow: -3px -3px 10px .1px black;
+}
+.hero5 {
+  background-color: lightsalmon;
+  border-radius: 13px;
+  border-width: 12px;
+  border-style: solid;
+  box-shadow: -6px -6px 10px 1px black;
 }
 .boss {
-  background-color: red;
+  background-color: black;
   border-radius:6px;
-  border-width: 14px;
+  border-width: 10px;
+  border-style: dotted;
+  border-color: red;
+  box-shadow: -15px -15px 10px 12px black;
 }
-.enemy {
+.enemy1 {
+  background-color: rgb(182, 164, 0);
+  border-radius:4px;
+  border-width: 8px;
+  border-style: dashed;
+  border-color: red;
+  box-shadow: -3px -3px 10px .1px black;
+}
+.enemy2 {
+  background-color: darkslategray;;
+  border-radius:4px;
+  border-width: 8px;
+  border-style: dashed;
+  border-color: red;
+  box-shadow: -3px -3px 10px .1px black;
+}
+.enemy3 {
+  background-color:  rgb(1, 107, 10);
+  border-radius:4px;
+  border-width: 8px;
+  border-style: dashed;
+  border-color: red;
+  box-shadow: -3px -3px 10px .1px black;
+}
+.enemy4 {
   background-color: red;
   border-radius:4px;
   border-width: 8px;
-  border-style: dashed
+  border-style: dashed;
+  box-shadow: -3px -3px 10px .1px black;
 }
 .weapon {
   background-color: black;
-  border-style: dotted;
-  border-width: 10px;
-  border-color: greenyellow;
+  border-style: double;
+  border-width: 15px;
+  border-color: rgb(0, 226, 11);
+  box-shadow: -3px -3px 10px .1px black;
 }
 .xp {
-  background-color: yellow;
-  border-radius: 20px;
-  border-width: 4px;
+  background-color: rgb(255, 238, 1);
+  border-radius: 120px;
+  border-width: 6px;
   border-color: rgb(255, 115, 0);
   border-style: dotted;
+  box-shadow: -3px -3px 10px .1px black;
 }
 .health {
   background-color: green;
   border-width: 13px;
-  border-color: white;
   border-radius: 20px;
+  border-style: double;
   border-color: lime;
+  box-shadow: -3px -3px 10px .1px black;
 }
 .portal {
   background-color: blueviolet;
+  box-shadow: -6px -6px 10px 4px black;
 }
-.wall {
+.wall1 {
+  background-color: rgb(158, 143, 5);
+  box-shadow: -5px -5px 10px 2px black;
+}
+.wall2 {
   background-color: darkslategray;
+  box-shadow: -5px -5px 10px 2px black;
 }
-.floor {
-  background-color: white;
+.wall3 {
+  background-color: rgb(1, 107, 10);
+  box-shadow: -5px -5px 10px 2px black;
 }
-.darkness {
-  background-color: black;
+.wall4 {
+  background-color: red;
+  box-shadow: -5px -5px 10px 2px black;
+}
+.floor1 {
+  background-color: rgb(253, 250, 220);
+}
+.floor2 {
+  background-color: rgb(253, 250, 232);
+}
+.floor3 {
+  background-color: rgb(255, 255, 228);
+}
+.floor4 {
+  background-color: rgb(223, 243, 255);
+
 }
 .box:hover {
   background-color: yellow;

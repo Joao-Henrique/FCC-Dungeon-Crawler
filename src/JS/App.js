@@ -1,10 +1,11 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import ProjectDescription from './ProjectDescription';
 import dungeon1 from '../Maps/dungeon1';
 import dungeon2 from '../Maps/dungeon2';
 import dungeon3 from '../Maps/dungeon3';
 import dungeon4 from '../Maps/dungeon4';
 import BottomMenu from './BottomMenu';
+import Footer from './Footer';
 import logo from '../IMG/logo.svg';
 import TopMenu from './TopMenu';
 import Grid from './Grid';
@@ -41,19 +42,19 @@ class App extends Component {
   handleKeyPress = (e) => {
     e.preventDefault();
     switch (e.keyCode) {
-      // up
+        // up
       case 38:
         this.heroMoveValidation(0, -1);
         break;
-      // right
+        // right
       case 39:
         this.heroMoveValidation(1, 0);
         break;
-      // down
+        // down
       case 40:
         this.heroMoveValidation(0, 1);
         break;
-      // left
+        // left
       case 37:
         this.heroMoveValidation(-1, 0);
         break;
@@ -64,30 +65,30 @@ class App extends Component {
 
   heroMoveValidation = (y, x) => {
     switch (this.state.gameBoard[this.state.hero.heroPositionX + x][this.state.hero.heroPositionY + y]) {
-      //wall
+        //wall
       case "9":
         break;
-      //enemy
+        //enemy
       case "2":
         this.heroFightEnemy(x, y);
         break;
-      //boss
+        //boss
       case "3":
         this.heroFightBoss(x, y);
         break;
-      //weapon
+        //weapon
       case "5":
         this.heroGetsWeapon(x, y);
         break;
-      //score
+        //score
       case "6":
         this.heroGetsScore(x, y);
         break;
-      //health
+        //health
       case "7":
         this.heroGetsHealth(x, y);
         break;
-      //portal
+        //portal
       case "8":
         this.nextLevel();
         this.randomlyPlaceAllItems();
@@ -102,13 +103,13 @@ class App extends Component {
   heroCurrentPosition = () => {
     let stateCopy = Object.assign({}, this.state.gameBoard);
     stateCopy[this.state.hero.heroPositionX][this.state.hero.heroPositionY] = "1";
-    this.setState({ stateCopy })
+    this.setState({stateCopy})
   }
 
   heroClearPastPosition = () => {
     let stateCopy = Object.assign({}, this.state.gameBoard);
     stateCopy[this.state.hero.heroPositionX][this.state.hero.heroPositionY] = "0";
-    this.setState({ stateCopy })
+    this.setState({stateCopy})
   }
 
   heroMovesToNextPosition = (x, y) => {
@@ -135,7 +136,7 @@ class App extends Component {
   heroFightEnemy = (x, y) => {
     let stateCopy = Object.assign({}, this.state.hero);
     if (stateCopy.enemyHealth > 0) {
-      let enemyHealth = stateCopy.enemyHealth - (this.generateRandomNumber(30, 10) * (stateCopy.weaponDamage + stateCopy.level - 1));
+      let enemyHealth = stateCopy.enemyHealth - Math.floor(this.generateRandomNumber(30, 10) * (stateCopy.weaponDamage + (stateCopy.level / 3)));
       let health = stateCopy.health - (this.generateRandomNumber(30, 10) * (stateCopy.enemyLevel));
       this.setState({
         ...this.state,
@@ -166,7 +167,7 @@ class App extends Component {
   heroFightBoss = (x, y) => {
     let stateCopy = Object.assign({}, this.state.hero);
     if (stateCopy.bossHealth > 0) {
-      let bossHealth = stateCopy.bossHealth - (this.generateRandomNumber(30, 10) * (stateCopy.weaponDamage + stateCopy.level - 1));
+      let bossHealth = stateCopy.bossHealth - Math.floor(this.generateRandomNumber(30, 10) * (stateCopy.weaponDamage + (stateCopy.level / 3)));
       let health = stateCopy.health - (this.generateRandomNumber(30, 10));
       this.setState({
         ...this.state,
@@ -188,6 +189,9 @@ class App extends Component {
         }
       })
       alert("CONGRATULATIONS!!! You have FINISHED THE GAME!!! Your total score is " + this.state.hero.score + "XP")
+      window
+        .location
+        .reload(true);
     }
   }
 
@@ -196,7 +200,7 @@ class App extends Component {
     this.heroClearPastPosition();
     this.heroMovesToNextPosition(this.state.hero.heroPositionX + x, this.state.hero.heroPositionY + y);
     let weapon = stateCopy.weaponChoice[stateCopy.dungeon - 1];
-    let weaponDamage = stateCopy.weaponDamage++;
+    let weaponDamage = stateCopy.weaponDamage + 1;
     alert("You just found a " + stateCopy.weaponChoice[stateCopy.dungeon - 1] + " to fight with!");
     this.setState({
       ...this.state,
@@ -245,7 +249,7 @@ class App extends Component {
     switch (this.state.hero.dungeon) {
       case 1:
         alert("You have cleared the dungeon nº " + this.state.hero.dungeon + " !!!");
-        this.setState({ gameBoard: dungeon2 });
+        this.setState({gameBoard: dungeon2});
         this.setState({
           hero: {
             ...this.state.hero,
@@ -259,7 +263,7 @@ class App extends Component {
         break;
       case 2:
         alert("You have cleared the dungeon nº " + this.state.hero.dungeon + " !!!");
-        this.setState({ gameBoard: dungeon3 });
+        this.setState({gameBoard: dungeon3});
         this.setState({
           hero: {
             ...this.state.hero,
@@ -273,7 +277,7 @@ class App extends Component {
         break;
       case 3:
         alert("You have cleared the dungeon nº " + this.state.hero.dungeon + " !!!");
-        this.setState({ gameBoard: dungeon4 });
+        this.setState({gameBoard: dungeon4});
         this.setState({
           hero: {
             ...this.state.hero,
@@ -292,39 +296,18 @@ class App extends Component {
   }
 
   heroLevelUp = () => {
-    if (this.state.hero.toNextLevel <= 0) {
-      let stateCopy = Object.assign({}, this.state.hero);
-      stateCopy.toNextLevel = 1500;
-      stateCopy.level += 1;
-      this.setState({
-        ...this.state.hero,
-        hero: stateCopy
-      });
-      alert("You are getting stronger! Your skills have reach level " + stateCopy.level + " !!!");
-    }
+    let stateCopy = Object.assign({}, this.state.hero);
+    stateCopy.toNextLevel = 1500;
+    stateCopy.level += 1;
+    this.setState({
+      ...this.state.hero,
+      hero: stateCopy
+    });
+    alert("You are getting stronger! Your skills have reach level " + stateCopy.level + " !!!");
   }
 
   heroGameOver = () => {
     alert("GAME OVER!!! You are a dead box ;)")
-    this.heroViewArea(20, 0);
-    this.setState({ gameBoard: dungeon1 });
-    this.setState({
-      hero: {
-        ...this.state.hero,
-        heroPositionX: 16,
-        heroPositionY: 4,
-        health: 100,
-        weapon: "Hands",
-        weaponDamage: 1,
-        enemyHealth: 100,
-        bossHealth: 2500,
-        enemyLevel: 1,
-        level: 1,
-        toNextLevel: 1500,
-        score: 0,
-        dungeon: 1,
-      }
-    });
   }
 
   generateRandomNumber = (max, min) => {
@@ -341,7 +324,7 @@ class App extends Component {
         i--;
       }
     }
-    this.setState({ gameBoard: stateCopy })
+    this.setState({gameBoard: stateCopy})
   }
 
   randomlyPlaceAllItems = () => {
@@ -352,7 +335,7 @@ class App extends Component {
     //score
     this.randomlyPlaceItem("6", 20);
     //health
-    this.randomlyPlaceItem("7", 11);
+    this.randomlyPlaceItem("7", 9);
   }
 
   ///////////////////////////////////////////////////////////
@@ -366,10 +349,13 @@ class App extends Component {
   }
 
   componentDidUpdate() {
-    this.heroLevelUp();
     if (this.state.hero.health < 0) {
       this.heroGameOver();
-      this.randomlyPlaceAllItems();
+      window
+        .location
+        .reload(true);
+    } else if (this.state.hero.toNextLevel <= 0) {
+      this.heroLevelUp();
     }
   }
 
@@ -380,7 +366,7 @@ class App extends Component {
     return (
       <div className="App">
         <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
+          <img src={logo} className="App-logo" alt="logo"/>
           <h1 className="App-title">FCC Dungeon Crawler by João Henrique</h1>
         </header>
         <h1>Roguelike Dungeon Crawler Game</h1>
@@ -388,22 +374,25 @@ class App extends Component {
           <div className="col-md-6 projectSection">
             <div className="wraper">
               <div className="gameContainer">
-                <TopMenu heroStats={this.state.hero} />
+                <TopMenu heroStats={this.state.hero}/>
                 <div id="container">
                   <Grid
                     selectBox={this.selectBox}
                     gameBoard={this.state.gameBoard}
                     rows={this.rows}
-                    cols={this.cols} />
+                    cols={this.cols}
+                    dungeon={this.state.hero.dungeon}
+                    weaponDamage={this.state.hero.weaponDamage}/>
                 </div>
-                <BottomMenu heroStats={this.state.hero} />
+                <BottomMenu heroStats={this.state.hero}/>
               </div>
             </div>
           </div>
           <div className="col-md-6 information">
-            <ProjectDescription />
+            <ProjectDescription/>
           </div>
         </div>
+        <Footer/>
       </div>
     )
   }

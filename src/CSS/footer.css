@@ -26,7 +26,7 @@ ul.social-network li {
 .social-circle li i {
   margin: 0;
   line-height: 40px;
-  color: white;
+  color: lightslategray;
 }
 
 .social-circle li .socialIcon:hover i,
@@ -57,17 +57,18 @@ ul.social-network li {
 }
 
 .authorFooter {
-  color: white;
+  color: lightslategray;
   text-align: center;
 }
 
 footer {
   width: 100%;
-  height: 140px;
+  height: 150px;
 }
 
 .footer {
   background: black;
+  padding: 50px;
 }
 
 .separator {
@@ -84,6 +85,7 @@ footer {
 /* Small devices (tablets, 768px and up) */
 
 @media (min-width: 992px) {
+
   ul.social-network {
     float: right;
   }
@@ -92,10 +94,9 @@ footer {
     padding-top: 1.4em;
   }
   footer {
-    position: relative;
     height: 100px;
     background: black;
-    height: 60px;
+    height: 150px;
   }
   .separator {
     visibility: visible;
@@ -107,8 +108,5 @@ footer {
   h6 {
     font-size: 15px;
     margin-top: 0;
-  }
-  .addNewRecipeButton {
-    margin-bottom: 200px;
   }
 }

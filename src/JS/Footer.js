@@ -2,7 +2,7 @@ import React from 'react';
 
 const FooterInstance = () => {
   return (
-    <footer className="navbar navbar-default navbar-fixed-bottom">
+    <footer>
       <div className="container-fluid footer">
         <div className="col-md-6 socialFooter">
           <ul className="social-network social-circle">
