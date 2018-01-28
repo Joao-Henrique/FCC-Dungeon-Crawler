@@ -1,4 +1,4 @@
-# FCC Game Of Life
+# FCC Roguelike Dungeon Crawler Game
 
 ## - Project description
 
